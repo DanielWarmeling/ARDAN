@@ -308,12 +308,32 @@
     window.location.href = logoutUrl.toString();
   }
 
+  async function ensureEmpresaAtiva() {
+    const current = getEmpresaAtivaSlug();
+    if (current) return current;
+
+    const token = getToken();
+    if (!token) return '';
+
+    try {
+      const res = await fetch(`${window.API_BASE_URL}/api/empresas/minhas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json().catch(() => []);
+      const first = Array.isArray(data) && data.length ? String(data[0].slug || '').trim() : '';
+      if (first) setEmpresaAtivaSlug(first);
+      return first;
+    } catch {
+      return '';
+    }
+  }
+
   async function authFetch(url, opts = {}) {
     await ensureFreshToken();
     const token = getToken();
     const headers = new Headers(opts.headers || {});
     if (token) headers.set('Authorization', `Bearer ${token}`);
-    const slug = getEmpresaAtivaSlug();
+    const slug = await ensureEmpresaAtiva();
     if (slug) headers.set('X-Empresa-Slug', slug);
     return fetch(url, { ...opts, headers });
   }
@@ -328,6 +348,39 @@
     return data?.items ?? data;
   }
 
+
+  let moduloPermsCache = null;
+  async function getPermissoes() {
+    if (moduloPermsCache) return moduloPermsCache;
+    const r = await authFetch(`${window.API_BASE_URL}/api/usuarios/permissoes`);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+    moduloPermsCache = data?.permissoes || {};
+    return moduloPermsCache;
+  }
+
+  async function hasModuleAccess(modulo) {
+    const wanted = String(modulo || '').trim();
+    if (!wanted) return false;
+    const fromRole = hasRole(wanted) || hasRole('portal_admin');
+    if (fromRole) return true;
+    try {
+      const perms = await getPermissoes();
+      return !!perms[wanted] || !!perms.portal_admin;
+    } catch {
+      return false;
+    }
+  }
+
+  async function guardModuleAccess(modulo, redirect = '/home.html') {
+    const ok = await hasModuleAccess(modulo);
+    if (!ok) {
+      alert('Você não tem permissão para acessar esta página.');
+      window.location.href = redirect;
+      return false;
+    }
+    return true;
+  }
   window.Auth = {
     getPublicConfig,
     requireAuth,
@@ -338,6 +391,9 @@
     getEmpresaAtivaSlug,
     setEmpresaAtivaSlug,
     hasRole,
+    getPermissoes,
+    hasModuleAccess,
+    guardModuleAccess,
     fetch: authFetch,
     fetchJSON,
   };
