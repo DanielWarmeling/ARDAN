@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   await Auth.requireAuth();
 
   const user = Auth.getUser();
+  const publicCfg = await Auth.getPublicConfig().catch(() => ({}));
+  const chatwootUrl = publicCfg?.integrations?.chatwootUrl || '';
+  const chatwootCard = document.getElementById('card-chatwoot');
+  if (chatwootCard && chatwootUrl) {
+    chatwootCard.dataset.url = chatwootUrl;
+    chatwootCard.style.display = '';
+  }
+
   const userNameEl = document.getElementById('user-name');
   if (userNameEl) userNameEl.textContent = user.name || user.username || user.email || 'Usuário';
 
