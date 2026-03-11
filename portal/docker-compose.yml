@@ -48,6 +48,9 @@ services:
       CHATWOOT_URL: "${CHATWOOT_URL:-}"
       N8N_URL: "${N8N_URL:-}"
 
+      CHATWOOT_URL: "${CHATWOOT_URL:-}"
+      N8N_URL: "${N8N_URL:-}"
+
       CORS_ORIGIN: "${CORS_ORIGIN:-*}"
       TZ: America/Sao_Paulo
     ports:
