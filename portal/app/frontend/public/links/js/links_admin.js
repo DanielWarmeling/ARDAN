@@ -104,18 +104,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function montarPayloadFromForm() {
-    const marca = normalizarMarca(el.marca ? el.marca.value : 'ibmf');
     return {
+      marca: normalizarMarca(el.marca ? el.marca.value : 'ibmf'),
       titulo: (el.titulo.value || '').trim(),
       url: (el.url.value || '').trim(),
-      categoria: marca,
+      descricao: (el.descricao.value || '').trim() || null,
+      categoria: (el.categoria.value || '').trim() || null,
       ordem: Number(el.ordem.value || 0),
       ativo: el.ativo.value === 'true'
     };
   }
 
   function validarPayload(p) {
-        if (!p.titulo) return 'Nome do link é obrigatório.';
+    if (!p.marca) return 'Marca é obrigatória.';
+    if (!p.titulo) return 'Nome do link é obrigatório.';
     if (!p.url) return 'URL é obrigatória.';
     if (!/^https?:\/\//i.test(p.url)) return 'URL deve começar com http:// ou https://';
     return '';
@@ -144,7 +146,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const res = await Auth.fetch(`${API_BASE_URL}/api/links`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
@@ -389,9 +390,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       setRowMsg('');
 
       const payload = {
+        marca: normalizarMarca(inMarca.value),
         titulo: (inTitulo.value || '').trim(),
         url: (inUrl.value || '').trim(),
-        categoria: normalizarMarca(inMarca.value),
+        descricao: (inDescricao.value || '').trim() || null,
+        categoria: (inCategoria.value || '').trim() || null,
         ordem: Number(inOrdem.value || 0),
         ativo: inAtivo.value === 'true'
       };
@@ -403,9 +406,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       const mudou =
-        payload.categoria !== base.marca ||
+        payload.marca !== base.marca ||
         payload.titulo !== base.titulo ||
         payload.url !== base.url ||
+        (payload.descricao || '') !== (base.descricao || '') ||
+        (payload.categoria || '') !== (base.categoria || '') ||
         payload.ordem !== base.ordem ||
         payload.ativo !== base.ativo;
 
@@ -418,17 +423,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       btnSalvar.disabled = true;
       try {
         const res = await Auth.fetch(`${API_BASE_URL}/api/links/${base.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'PATCH',
           body: JSON.stringify(payload)
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Erro ao salvar.');
 
-        base.marca = payload.categoria;
+        base.marca = payload.marca;
         base.titulo = payload.titulo;
         base.url = payload.url;
-        base.descricao = '';
+        base.descricao = payload.descricao || '';
         base.categoria = payload.categoria || '';
         base.ordem = payload.ordem;
         base.ativo = payload.ativo;
