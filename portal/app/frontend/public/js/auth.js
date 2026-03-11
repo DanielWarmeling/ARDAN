@@ -341,4 +341,8 @@
     fetch: authFetch,
     fetchJSON,
   };
+
+  // Compatibilidade com telas legadas
+  window.checkAuth = requireAuth;
+  window.fetchAuth = authFetch;
 })();
