@@ -1,21 +1,12 @@
-function safeParseJwt(token) {
-  try {
-    const payload = token.split('.')[1];
-    return payload ? JSON.parse(atob(payload)) : {};
-  } catch {
-    return {};
-  }
-}
-
 function getUserFromPortal() {
-  const token = localStorage.getItem('token') || '';
-  const p = safeParseJwt(token);
+  const user = window.Auth?.getUser ? Auth.getUser() : {};
+  const name = user.name || user.username || user.email || 'Usuário';
   return {
-    id: p.id,
-    nome: p.nome || localStorage.getItem('nome') || 'Usuário',
-    isAdmin: !!p.isAdmin,
-    acessoProjetos: !!p.acessoProjetos,
-    projetosAdmin: !!p.projetosAdmin
+    id: user.sub || null,
+    nome: name,
+    isAdmin: !!(window.Auth?.hasRole && Auth.hasRole('portal_admin')),
+    acessoProjetos: !!(window.Auth?.hasRole && (Auth.hasRole('projetos') || Auth.hasRole('projetos_admin') || Auth.hasRole('portal_admin'))),
+    projetosAdmin: !!(window.Auth?.hasRole && (Auth.hasRole('projetos_admin') || Auth.hasRole('portal_admin')))
   };
 }
 

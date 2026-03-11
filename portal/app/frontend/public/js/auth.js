@@ -328,6 +328,39 @@
     return data?.items ?? data;
   }
 
+
+  let moduloPermsCache = null;
+  async function getPermissoes() {
+    if (moduloPermsCache) return moduloPermsCache;
+    const r = await authFetch(`${window.API_BASE_URL}/api/usuarios/permissoes`);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+    moduloPermsCache = data?.permissoes || {};
+    return moduloPermsCache;
+  }
+
+  async function hasModuleAccess(modulo) {
+    const wanted = String(modulo || '').trim();
+    if (!wanted) return false;
+    const fromRole = hasRole(wanted) || hasRole('portal_admin');
+    if (fromRole) return true;
+    try {
+      const perms = await getPermissoes();
+      return !!perms[wanted] || !!perms.portal_admin;
+    } catch {
+      return false;
+    }
+  }
+
+  async function guardModuleAccess(modulo, redirect = '/home.html') {
+    const ok = await hasModuleAccess(modulo);
+    if (!ok) {
+      alert('Você não tem permissão para acessar esta página.');
+      window.location.href = redirect;
+      return false;
+    }
+    return true;
+  }
   window.Auth = {
     getPublicConfig,
     requireAuth,
@@ -338,6 +371,9 @@
     getEmpresaAtivaSlug,
     setEmpresaAtivaSlug,
     hasRole,
+    getPermissoes,
+    hasModuleAccess,
+    guardModuleAccess,
     fetch: authFetch,
     fetchJSON,
   };

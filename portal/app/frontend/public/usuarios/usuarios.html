@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Portal</title>
+  <title>Admin de Acessos - Portal</title>
   <link rel="stylesheet" href="css/usuarios.css" />
 </head>
 <body>
   <div class="container">
     <div class="header-top">
       <div>
-        <h1>Admin</h1>
-        <p class="subtitulo">Empresas (metadados) + visualização do token Keycloak.</p>
+        <h1>Admin de Acessos</h1>
+        <p class="subtitulo">Controle de módulos para usuários não-admin (via Keycloak + empresa ativa).</p>
       </div>
       <div class="header-acoes">
         <span class="saudacao">Olá, <span id="user-name"></span></span>
@@ -20,17 +20,28 @@
     </div>
 
     <div id="acesso-negado" class="form-message hidden">
-      Acesso negado. Esta página é restrita a administradores (role <b>usuarios_admin</b> ou <b>portal_admin</b>).
+      Acesso negado. Apenas <b>usuarios_admin</b> ou <b>portal_admin</b> podem gerenciar módulos.
     </div>
 
-    <div class="card" id="card-empresas" style="margin-top:16px;">
-      <h3 style="margin-top:0;">Empresas (nome por slug)</h3>
-      <p style="opacity:.8; margin-top:6px;">O vínculo usuário ↔ empresa é feito no Keycloak via grupos <code>/empresas/SLUG</code>. Aqui você só salva o <b>nome</b> para aparecer bonito no seletor.</p>
+    <div class="card" id="card-modulos" style="margin-top:16px;">
+      <h3 style="margin-top:0;">Liberar módulos por usuário (empresa ativa)</h3>
+      <p style="opacity:.8; margin-top:6px;">Informe o <b>sub</b> do Keycloak (obrigatório) e um nome para identificação.</p>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-        <input id="empresa-slug" class="input" placeholder="slug (ex: IBMF)" style="min-width:200px;" />
-        <input id="empresa-nome" class="input" placeholder="nome (ex: IBMF Indústria...)" style="min-width:320px;" />
-        <button id="btn-salvar" class="btn-primary" type="button">Salvar</button>
+        <input id="kc-sub" class="input" placeholder="sub do Keycloak" style="min-width:280px;" />
+        <input id="kc-nome" class="input" placeholder="Nome do usuário" style="min-width:260px;" />
+      </div>
+
+      <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:12px;">
+        <label><input type="checkbox" id="mod-projetos" /> Projetos</label>
+        <label><input type="checkbox" id="mod-contratos" /> Contratos</label>
+        <label><input type="checkbox" id="mod-links" /> Links</label>
+        <label><input type="checkbox" id="mod-vagas" /> Vagas</label>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button id="btn-salvar" class="btn-primary" type="button">Salvar permissões</button>
+        <button id="btn-limpar" class="btn-voltar" type="button">Limpar</button>
       </div>
 
       <div id="msg" class="form-message hidden" style="margin-top:12px;"></div>
@@ -39,20 +50,16 @@
         <table class="tabela" style="width:100%;">
           <thead>
             <tr>
-              <th style="text-align:left;">Slug</th>
-              <th style="text-align:left;">Nome</th>
+              <th style="text-align:left;">Usuário</th>
+              <th style="text-align:left;">Sub</th>
+              <th style="text-align:left;">Permissões</th>
+              <th style="text-align:left;">Ações</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
         </table>
       </div>
     </div>
-
-    <div class="card" style="margin-top:16px;">
-      <h3 style="margin-top:0;">Token (debug)</h3>
-      <pre id="token" style="white-space:pre-wrap; word-break:break-word; background:#0b1020; padding:12px; border-radius:10px;"></pre>
-    </div>
-
   </div>
 
   <script src="../js/config.js"></script>
