@@ -25,8 +25,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    env_file:
-      - ./.env
     environment:
       DB_HOST: "${POSTGRES_HOST:-postgres}"
       DB_PORT: "${POSTGRES_PORT:-5432}"
@@ -43,9 +41,12 @@ services:
       BACKEND_PORT: "${BACKEND_PORT:-7071}"
       PORT: "${BACKEND_PORT:-7071}"
 
-      KEYCLOAK_URL: "${KEYCLOAK_URL}"
-      KEYCLOAK_REALM: "${KEYCLOAK_REALM}"
-      KEYCLOAK_CLIENT_ID: "${KEYCLOAK_CLIENT_ID}"
+      KEYCLOAK_URL: "${KEYCLOAK_URL:-https://auth.leonelsystem.com.br}"
+      KEYCLOAK_REALM: "${KEYCLOAK_REALM:-cloud-auth}"
+      KEYCLOAK_CLIENT_ID: "${KEYCLOAK_CLIENT_ID:-portal-web}"
+
+      CHATWOOT_URL: "${CHATWOOT_URL:-}"
+      N8N_URL: "${N8N_URL:-}"
 
       CHATWOOT_URL: "${CHATWOOT_URL:-}"
       N8N_URL: "${N8N_URL:-}"
