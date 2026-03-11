@@ -2,18 +2,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 🔒 exige login
   await Auth.requireAuth();
 
-  // 🔒 exige permissão (admin OU acessoLinks)
-  if (typeof Auth.guardLinksAccess === 'function') {
-    Auth.guardLinksAccess();
-  } else {
-    const admin = (typeof isAdmin === 'function') ? isAdmin() : false;
-    const links = (typeof Auth.hasLinksAccess === 'function') ? Auth.hasLinksAccess() : false;
-    if (!admin && !links) {
-      alert('Você não tem permissão para acessar esta página.');
-      window.location.href = '../home.html';
-      return;
-    }
-  }
+  // 🔒 exige permissão via Keycloak + permissões do portal
+  const allowed = await Auth.guardModuleAccess('links', '../home.html');
+  if (!allowed) return;
 
   // Elementos
   const el = {

@@ -51,10 +51,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  document.querySelectorAll('.home-card[data-role]').forEach((card) => {
+  const cards = Array.from(document.querySelectorAll('.home-card[data-role]'));
+  for (const card of cards) {
     const role = card.getAttribute('data-role');
-    if (!(Auth.hasRole(role) || Auth.hasRole('portal_admin'))) card.remove();
-  });
+    const allowed = await Auth.hasModuleAccess(role);
+    if (!allowed) card.remove();
+  }
 
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) logoutBtn.addEventListener('click', () => Auth.logout());

@@ -648,26 +648,104 @@ projetosRouter.delete('/:id', authRequired, requireEmpresaSelected, requireRoleA
 app.use('/api/projetos', projetosRouter);
 
 const usuariosRouter = express.Router();
-usuariosRouter.get("/", authRequired, requireRoleAny("portal_admin", "usuarios_admin"), (_req, res) => {
-  res.json({ ok: true, items: [] });
+const MODULOS_PORTAL = ["projetos", "contratos", "links", "vagas"];
+
+function mapPermissoesFromRoles(user) {
+  const roles = user?.roles || [];
+  const has = (r) => roles.includes("portal_admin") || roles.includes(r);
+  return {
+    projetos: has("projetos") || has("projetos_admin"),
+    contratos: has("contratos"),
+    links: has("links"),
+    vagas: has("vagas"),
+    usuarios_admin: has("usuarios_admin"),
+    portal_admin: roles.includes("portal_admin"),
+  };
+}
+
+usuariosRouter.get("/", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "usuarios_admin"), async (req, res, next) => {
+  try {
+    const r = await q(`
+      SELECT keycloak_sub, COALESCE(MAX(nome_usuario), keycloak_sub) AS nome_usuario,
+             MAX(updated_at) AS updated_at
+      FROM public.usuarios_modulos_permissoes
+      WHERE empresa = $1
+      GROUP BY keycloak_sub
+      ORDER BY nome_usuario
+    `, [req.empresa]);
+    res.json({ ok: true, items: r.rows });
+  } catch (e) { next(e); }
 });
+
 usuariosRouter.post("/", authRequired, requireRoleAny("portal_admin", "usuarios_admin"), (_req, res) => {
   res.json({ ok: true, message: "Usuários são gerenciados no Keycloak." });
 });
+
 usuariosRouter.get("/me", authRequired, (req, res) => {
   res.json({ ok: true, user: { sub: req.user.sub, email: req.user.email, username: req.user.preferred_username, name: req.user.name, roles: req.user.roles, empresas: req.user.companies } });
 });
-usuariosRouter.get("/permissoes", authRequired, (req, res) => {
-  res.json({ ok: true, permissoes: {
-    portal_admin: req.user.roles.includes("portal_admin"),
-    projetos: req.user.roles.includes("portal_admin") || req.user.roles.includes("projetos") || req.user.roles.includes("projetos_admin"),
-    projetos_admin: req.user.roles.includes("portal_admin") || req.user.roles.includes("projetos_admin"),
-    contratos: req.user.roles.includes("portal_admin") || req.user.roles.includes("contratos"),
-    links: req.user.roles.includes("portal_admin") || req.user.roles.includes("links"),
-    vagas: req.user.roles.includes("portal_admin") || req.user.roles.includes("vagas"),
-    usuarios_admin: req.user.roles.includes("portal_admin") || req.user.roles.includes("usuarios_admin"),
-  }});
+
+usuariosRouter.get("/permissoes", authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const base = mapPermissoesFromRoles(req.user);
+    if (!req.user.sub) return res.json({ ok: true, permissoes: base });
+
+    const rows = await q(`
+      SELECT modulo, permitido
+      FROM public.usuarios_modulos_permissoes
+      WHERE empresa = $1 AND keycloak_sub = $2
+    `, [req.empresa, req.user.sub]);
+
+    const merged = { ...base };
+    for (const row of rows.rows) {
+      if (MODULOS_PORTAL.includes(row.modulo)) {
+        merged[row.modulo] = !!row.permitido;
+      }
+    }
+
+    res.json({ ok: true, permissoes: merged });
+  } catch (e) { next(e); }
 });
+
+usuariosRouter.get("/modulos", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "usuarios_admin"), async (req, res, next) => {
+  try {
+    const r = await q(`
+      SELECT keycloak_sub, COALESCE(MAX(nome_usuario), keycloak_sub) AS nome_usuario,
+             jsonb_object_agg(modulo, permitido) AS permissoes
+      FROM public.usuarios_modulos_permissoes
+      WHERE empresa = $1
+      GROUP BY keycloak_sub
+      ORDER BY nome_usuario
+    `, [req.empresa]);
+    res.json({ ok: true, items: r.rows });
+  } catch (e) { next(e); }
+});
+
+usuariosRouter.put("/modulos/:sub", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "usuarios_admin"), async (req, res, next) => {
+  try {
+    const sub = String(req.params.sub || "").trim();
+    if (!sub) return res.status(400).json({ ok: false, error: "sub é obrigatório." });
+
+    const nome = (req.body?.nome_usuario || req.body?.nome || "").toString().trim() || null;
+    const permissoes = req.body?.permissoes || {};
+
+    for (const modulo of MODULOS_PORTAL) {
+      const permitido = !!permissoes[modulo];
+      await q(`
+        INSERT INTO public.usuarios_modulos_permissoes (empresa, keycloak_sub, nome_usuario, modulo, permitido, updated_by, updated_at)
+        VALUES ($1,$2,$3,$4,$5,$6,now())
+        ON CONFLICT (empresa, keycloak_sub, modulo)
+        DO UPDATE SET nome_usuario = COALESCE(EXCLUDED.nome_usuario, public.usuarios_modulos_permissoes.nome_usuario),
+                      permitido = EXCLUDED.permitido,
+                      updated_by = EXCLUDED.updated_by,
+                      updated_at = now()
+      `, [req.empresa, sub, nome, modulo, permitido, req.user.sub || null]);
+    }
+
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
 app.use("/api/usuarios", usuariosRouter);
 
 const frontPublic = path.join(__dirname, "public");
