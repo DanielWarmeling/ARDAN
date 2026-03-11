@@ -50,12 +50,7 @@ Testes:
 - depois de logar, testar /api/me
 
 
-Deploy rápido (sem erro de .env ausente):
-1) cp .env.example .env
-2) ajuste somente o necessário (senha DB, CORS_ORIGIN, URLs opcionais)
+Deploy rápido (já pronto para build):
+1) revise o arquivo .env (já versionado com valores funcionais)
+2) ajuste somente se necessário (senha DB, CORS_ORIGIN, URLs opcionais)
 3) docker compose up -d --build
-
-Se não quiser usar .env, o compose agora sobe com defaults para Keycloak:
-- KEYCLOAK_URL=https://auth.leonelsystem.com.br
-- KEYCLOAK_REALM=cloud-auth
-- KEYCLOAK_CLIENT_ID=portal-web
