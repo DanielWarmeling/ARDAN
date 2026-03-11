@@ -308,12 +308,32 @@
     window.location.href = logoutUrl.toString();
   }
 
+  async function ensureEmpresaAtiva() {
+    const current = getEmpresaAtivaSlug();
+    if (current) return current;
+
+    const token = getToken();
+    if (!token) return '';
+
+    try {
+      const res = await fetch(`${window.API_BASE_URL}/api/empresas/minhas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json().catch(() => []);
+      const first = Array.isArray(data) && data.length ? String(data[0].slug || '').trim() : '';
+      if (first) setEmpresaAtivaSlug(first);
+      return first;
+    } catch {
+      return '';
+    }
+  }
+
   async function authFetch(url, opts = {}) {
     await ensureFreshToken();
     const token = getToken();
     const headers = new Headers(opts.headers || {});
     if (token) headers.set('Authorization', `Bearer ${token}`);
-    const slug = getEmpresaAtivaSlug();
+    const slug = await ensureEmpresaAtiva();
     if (slug) headers.set('X-Empresa-Slug', slug);
     return fetch(url, { ...opts, headers });
   }
