@@ -451,50 +451,201 @@ contratosRouter.delete("/:id", authRequired, requireEmpresaSelected, requireRole
 app.use("/api/contratos", contratosRouter);
 
 const projetosRouter = express.Router();
-projetosRouter.get("/modelos", authRequired, async (_req, res) => res.json([]));
-projetosRouter.get("/setores", authRequired, async (_req, res) => res.json([]));
-projetosRouter.get("/setores/me", authRequired, async (_req, res) => res.json([]));
-projetosRouter.get("/usuarios", authRequired, async (_req, res) => res.json([]));
-projetosRouter.get("/tarefas-modelos", authRequired, async (_req, res) => res.json([]));
-projetosRouter.get("/aprovacoes", authRequired, async (_req, res) => res.json({ items: [] }));
-projetosRouter.get("/", authRequired, requireEmpresaSelected, async (req, res, next) => {
+
+async function ensureProjetoUsuario(empresa, user) {
+  const nome = user.name || user.preferred_username || user.email || 'Usuário';
+  const r = await q(`INSERT INTO public.projetos_usuarios (empresa, keycloak_sub, nome, email, username, ativo, updated_at)
+    VALUES ($1,$2,$3,$4,$5,true,now())
+    ON CONFLICT (empresa, keycloak_sub) DO UPDATE SET
+      nome = EXCLUDED.nome,
+      email = EXCLUDED.email,
+      username = EXCLUDED.username,
+      ativo = true,
+      updated_at = now()
+    RETURNING id, nome, email, username`, [empresa, user.sub || null, nome, user.email || null, user.preferred_username || null]);
+  return r.rows[0];
+}
+
+projetosRouter.get('/usuarios', authRequired, requireEmpresaSelected, async (req, res, next) => {
   try {
-    const r = await q(`SELECT id, titulo, descricao, status, setor, prioridade, created_at, updated_at FROM public.projetos WHERE empresa = $1 ORDER BY id DESC`, [req.empresa]);
-    res.json({ ok: true, items: r.rows });
+    await ensureProjetoUsuario(req.empresa, req.user);
+    const r = await q(`SELECT id, nome, email, username FROM public.projetos_usuarios WHERE empresa = $1 AND ativo = true ORDER BY nome`, [req.empresa]);
+    res.json(r.rows);
   } catch (e) { next(e); }
 });
-projetosRouter.post("/", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "projetos", "projetos_admin"), async (req, res, next) => {
+
+projetosRouter.get('/setores', authRequired, requireEmpresaSelected, async (req, res, next) => {
   try {
-    const { titulo, descricao, status = "triagem", setor, prioridade = 0 } = req.body || {};
-    if (!titulo) return res.status(400).json({ ok: false, error: "titulo é obrigatório." });
-    const r = await q(`INSERT INTO public.projetos (empresa, titulo, descricao, status, setor, prioridade, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`, [req.empresa, String(titulo), descricao || null, String(status), setor || null, Number(prioridade) || 0, req.user.sub]);
-    res.json({ ok: true, id: r.rows[0].id });
+    const withMembros = String(req.query.with_membros || '0') === '1';
+    const r = await q(`SELECT id, nome, descricao, ativo FROM public.projetos_setores WHERE empresa = $1 ORDER BY nome`, [req.empresa]);
+    if (!withMembros) return res.json(r.rows);
+    const out = [];
+    for (const s of r.rows) {
+      const membros = await q(`SELECT u.id, u.nome, u.email FROM public.projetos_setor_membros sm JOIN public.projetos_usuarios u ON u.id = sm.usuario_id WHERE sm.setor_id = $1 ORDER BY u.nome`, [s.id]);
+      const aprov = await q(`SELECT u.id, u.nome, u.email FROM public.projetos_setor_aprovadores sa JOIN public.projetos_usuarios u ON u.id = sa.usuario_id WHERE sa.setor_id = $1 ORDER BY u.nome`, [s.id]);
+      out.push({ ...s, membros: membros.rows, aprovadores: aprov.rows });
+    }
+    res.json(out);
   } catch (e) { next(e); }
 });
-projetosRouter.get("/:id", authRequired, requireEmpresaSelected, async (req, res, next) => {
+
+projetosRouter.get('/setores/me', authRequired, requireEmpresaSelected, async (req, res, next) => {
   try {
-    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: "id inválido" });
-    const r = await q(`SELECT * FROM public.projetos WHERE id = $1 AND empresa = $2`, [id, req.empresa]);
-    if (!r.rowCount) return res.status(404).json({ ok: false, error: "Projeto não encontrado" });
-    res.json({ ok: true, item: r.rows[0] });
+    if (!req.user.sub) return res.json([]);
+    const me = await q(`SELECT id FROM public.projetos_usuarios WHERE empresa = $1 AND keycloak_sub = $2 LIMIT 1`, [req.empresa, req.user.sub]);
+    if (!me.rowCount) return res.json([]);
+    const r = await q(`SELECT sm.setor_id FROM public.projetos_setor_membros sm JOIN public.projetos_setores s ON s.id = sm.setor_id WHERE sm.usuario_id = $1 AND s.empresa = $2`, [me.rows[0].id, req.empresa]);
+    res.json(r.rows.map((x) => x.setor_id));
   } catch (e) { next(e); }
 });
-projetosRouter.put("/:id", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "projetos", "projetos_admin"), async (req, res, next) => {
+
+projetosRouter.post('/setores', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
   try {
-    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: "id inválido" });
-    const { titulo, descricao, status, setor, prioridade } = req.body || {};
-    await q(`UPDATE public.projetos SET titulo = COALESCE($1, titulo), descricao = COALESCE($2, descricao), status = COALESCE($3, status), setor = COALESCE($4, setor), prioridade = COALESCE($5, prioridade), updated_at = now() WHERE id = $6 AND empresa = $7`, [titulo ?? null, descricao ?? null, status ?? null, setor ?? null, prioridade !== undefined ? Number(prioridade) : null, id, req.empresa]);
+    const { nome, descricao, ativo = true } = req.body || {};
+    if (!nome) return res.status(400).json({ ok: false, error: 'nome é obrigatório.' });
+    const r = await q(`INSERT INTO public.projetos_setores (empresa, nome, descricao, ativo, created_by) VALUES ($1,$2,$3,$4,$5) RETURNING id, nome, descricao, ativo`, [req.empresa, String(nome), descricao || null, !!ativo, req.user.sub]);
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+
+projetosRouter.put('/setores/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: 'id inválido' });
+    const { nome, descricao, ativo } = req.body || {};
+    const r = await q(`UPDATE public.projetos_setores SET nome = COALESCE($1,nome), descricao = COALESCE($2,descricao), ativo = COALESCE($3,ativo), updated_at = now() WHERE id = $4 AND empresa = $5 RETURNING id, nome, descricao, ativo`, [nome ?? null, descricao ?? null, ativo !== undefined ? !!ativo : null, id, req.empresa]);
+    if (!r.rowCount) return res.status(404).json({ ok: false, error: 'Setor não encontrado' });
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+
+projetosRouter.delete('/setores/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: 'id inválido' });
+    await q(`DELETE FROM public.projetos_setores WHERE id = $1 AND empresa = $2`, [id, req.empresa]);
     res.json({ ok: true });
   } catch (e) { next(e); }
 });
-projetosRouter.delete("/:id", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "projetos", "projetos_admin"), async (req, res, next) => {
+
+async function syncSetorVinculo(table, setorId, ids) {
+  await q(`DELETE FROM ${table} WHERE setor_id = $1`, [setorId]);
+  for (const uid of ids) await q(`INSERT INTO ${table} (setor_id, usuario_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, [setorId, uid]);
+}
+
+projetosRouter.put('/setores/:id/membros', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
   try {
-    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: "id inválido" });
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok:false, error:'id inválido' });
+    const ids = Array.isArray(req.body?.usuario_ids) ? req.body.usuario_ids.map(Number).filter(Boolean) : [];
+    await syncSetorVinculo('public.projetos_setor_membros', id, ids);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+projetosRouter.put('/setores/:id/aprovadores', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok:false, error:'id inválido' });
+    const ids = Array.isArray(req.body?.usuario_ids) ? req.body.usuario_ids.map(Number).filter(Boolean) : [];
+    await syncSetorVinculo('public.projetos_setor_aprovadores', id, ids);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+projetosRouter.get('/modelos', authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const r = await q(`SELECT id, nome, descricao, ativo, setor_id, definicao_json FROM public.projetos_modelos WHERE empresa = $1 ORDER BY nome`, [req.empresa]);
+    res.json(r.rows);
+  } catch (e) { next(e); }
+});
+
+projetosRouter.post('/modelos', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const { nome, descricao, ativo = true, setor_id = null, definicao_json = {} } = req.body || {};
+    if (!nome) return res.status(400).json({ ok:false, error:'nome é obrigatório.' });
+    const r = await q(`INSERT INTO public.projetos_modelos (empresa, nome, descricao, ativo, setor_id, definicao_json, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, nome, descricao, ativo, setor_id, definicao_json`, [req.empresa, String(nome), descricao || null, !!ativo, setor_id ? Number(setor_id) : null, definicao_json || {}, req.user.sub]);
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+
+projetosRouter.put('/modelos/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok:false, error:'id inválido' });
+    const { nome, descricao, ativo, setor_id, definicao_json } = req.body || {};
+    const r = await q(`UPDATE public.projetos_modelos SET nome = COALESCE($1,nome), descricao = COALESCE($2,descricao), ativo = COALESCE($3,ativo), setor_id = COALESCE($4,setor_id), definicao_json = COALESCE($5,definicao_json), updated_at = now() WHERE id = $6 AND empresa = $7 RETURNING id, nome, descricao, ativo, setor_id, definicao_json`, [nome ?? null, descricao ?? null, ativo !== undefined ? !!ativo : null, setor_id !== undefined ? Number(setor_id) || null : null, definicao_json ?? null, id, req.empresa]);
+    if (!r.rowCount) return res.status(404).json({ ok:false, error:'Modelo não encontrado' });
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+
+projetosRouter.delete('/modelos/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try { const id = Number(req.params.id); if (!id) return res.status(400).json({ ok:false, error:'id inválido' }); await q(`DELETE FROM public.projetos_modelos WHERE id = $1 AND empresa = $2`, [id, req.empresa]); res.json({ ok:true }); } catch (e) { next(e); }
+});
+
+projetosRouter.get('/tarefas-modelos', authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try { const r = await q(`SELECT id, nome, descricao, ativo, setor_id, responsavel_nome, aprovador_nome, prazo_dias, obrigatoria, config_json FROM public.projetos_tarefas_modelos WHERE empresa = $1 ORDER BY nome`, [req.empresa]); res.json(r.rows); } catch (e) { next(e); }
+});
+projetosRouter.post('/tarefas-modelos', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const { nome, descricao, ativo = true, setor_id = null, responsavel_nome = null, aprovador_nome = null, prazo_dias = null, obrigatoria = false, config_json = {} } = req.body || {};
+    if (!nome) return res.status(400).json({ ok:false, error:'nome é obrigatório.' });
+    const r = await q(`INSERT INTO public.projetos_tarefas_modelos (empresa, nome, descricao, ativo, setor_id, responsavel_nome, aprovador_nome, prazo_dias, obrigatoria, config_json, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id, nome, descricao, ativo, setor_id, responsavel_nome, aprovador_nome, prazo_dias, obrigatoria, config_json`, [req.empresa, String(nome), descricao || null, !!ativo, setor_id ? Number(setor_id) : null, responsavel_nome || null, aprovador_nome || null, prazo_dias !== null ? Number(prazo_dias) : null, !!obrigatoria, config_json || {}, req.user.sub]);
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+projetosRouter.put('/tarefas-modelos/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok:false, error:'id inválido' });
+    const { nome, descricao, ativo, setor_id, responsavel_nome, aprovador_nome, prazo_dias, obrigatoria, config_json } = req.body || {};
+    const r = await q(`UPDATE public.projetos_tarefas_modelos SET nome = COALESCE($1,nome), descricao = COALESCE($2,descricao), ativo = COALESCE($3,ativo), setor_id = COALESCE($4,setor_id), responsavel_nome = COALESCE($5,responsavel_nome), aprovador_nome = COALESCE($6,aprovador_nome), prazo_dias = COALESCE($7,prazo_dias), obrigatoria = COALESCE($8,obrigatoria), config_json = COALESCE($9,config_json), updated_at = now() WHERE id = $10 AND empresa = $11 RETURNING id, nome, descricao, ativo, setor_id, responsavel_nome, aprovador_nome, prazo_dias, obrigatoria, config_json`, [nome ?? null, descricao ?? null, ativo !== undefined ? !!ativo : null, setor_id !== undefined ? Number(setor_id) || null : null, responsavel_nome ?? null, aprovador_nome ?? null, prazo_dias !== undefined ? Number(prazo_dias) || null : null, obrigatoria !== undefined ? !!obrigatoria : null, config_json ?? null, id, req.empresa]);
+    if (!r.rowCount) return res.status(404).json({ ok:false, error:'Modelo de tarefa não encontrado' });
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+projetosRouter.delete('/tarefas-modelos/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos_admin'), async (req, res, next) => {
+  try { const id = Number(req.params.id); if (!id) return res.status(400).json({ ok:false, error:'id inválido' }); await q(`DELETE FROM public.projetos_tarefas_modelos WHERE id = $1 AND empresa = $2`, [id, req.empresa]); res.json({ ok:true }); } catch (e) { next(e); }
+});
+
+projetosRouter.get('/aprovacoes', authRequired, async (_req, res) => res.json({ items: [] }));
+
+projetosRouter.get('/', authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const r = await q(`SELECT id, COALESCE(nome,titulo) AS nome, codigo, status, modelo_id, setor AS etapa, etapa_setor_id, responsavel_nome, prazo_fim, created_at, updated_at FROM public.projetos WHERE empresa = $1 ORDER BY id DESC`, [req.empresa]);
+    res.json({ ok: true, items: r.rows });
+  } catch (e) { next(e); }
+});
+projetosRouter.post('/', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const { titulo, nome, descricao = null, status = 'EM_ANDAMENTO', setor = null, prioridade = 0, modelo_id = null, codigo = null, prazo_fim = null, campos_json = {} } = req.body || {};
+    const nomeProjeto = nome || titulo;
+    if (!nomeProjeto) return res.status(400).json({ ok: false, error: 'nome é obrigatório.' });
+    const me = await ensureProjetoUsuario(req.empresa, req.user);
+    const r = await q(`INSERT INTO public.projetos (empresa, titulo, nome, descricao, status, setor, prioridade, modelo_id, codigo, prazo_fim, campos_json, dono_nome, created_by)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`, [req.empresa, String(nomeProjeto), String(nomeProjeto), descricao, String(status), setor, Number(prioridade) || 0, modelo_id ? Number(modelo_id) : null, codigo || null, prazo_fim || null, campos_json || {}, me.nome, req.user.sub]);
+    res.json({ ok: true, id: r.rows[0].id });
+  } catch (e) { next(e); }
+});
+projetosRouter.get('/:id', authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: 'id inválido' });
+    const r = await q(`SELECT * FROM public.projetos WHERE id = $1 AND empresa = $2`, [id, req.empresa]);
+    if (!r.rowCount) return res.status(404).json({ ok: false, error: 'Projeto não encontrado' });
+    res.json({ ok: true, item: r.rows[0] });
+  } catch (e) { next(e); }
+});
+projetosRouter.put('/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: 'id inválido' });
+    const { titulo, nome, descricao, status, setor, prioridade, codigo, prazo_fim } = req.body || {};
+    await q(`UPDATE public.projetos SET titulo = COALESCE($1, titulo), nome = COALESCE($2, nome), descricao = COALESCE($3, descricao), status = COALESCE($4, status), setor = COALESCE($5, setor), prioridade = COALESCE($6, prioridade), codigo = COALESCE($7, codigo), prazo_fim = COALESCE($8, prazo_fim), updated_at = now() WHERE id = $9 AND empresa = $10`, [titulo ?? null, nome ?? null, descricao ?? null, status ?? null, setor ?? null, prioridade !== undefined ? Number(prioridade) : null, codigo ?? null, prazo_fim ?? null, id, req.empresa]);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+projetosRouter.delete('/:id', authRequired, requireEmpresaSelected, requireRoleAny('portal_admin', 'projetos', 'projetos_admin'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: 'id inválido' });
     await q(`DELETE FROM public.projetos WHERE id = $1 AND empresa = $2`, [id, req.empresa]);
     res.json({ ok: true });
   } catch (e) { next(e); }
 });
-app.use("/api/projetos", projetosRouter);
+app.use('/api/projetos', projetosRouter);
 
 const usuariosRouter = express.Router();
 usuariosRouter.get("/", authRequired, requireRoleAny("portal_admin", "usuarios_admin"), (_req, res) => {
