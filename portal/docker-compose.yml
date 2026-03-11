@@ -47,6 +47,9 @@ services:
       KEYCLOAK_REALM: "${KEYCLOAK_REALM}"
       KEYCLOAK_CLIENT_ID: "${KEYCLOAK_CLIENT_ID}"
 
+      CHATWOOT_URL: "${CHATWOOT_URL:-}"
+      N8N_URL: "${N8N_URL:-}"
+
       CORS_ORIGIN: "${CORS_ORIGIN:-*}"
       TZ: America/Sao_Paulo
     ports:

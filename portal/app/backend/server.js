@@ -103,7 +103,14 @@ function requireEmpresaSelected(req, res, next) {
 async function q(text, params = []) { return pool.query(text, params); }
 
 app.get("/api/public-config", (_req, res) => {
-  res.json({ ok: true, keycloak: { url: KEYCLOAK_URL, realm: KEYCLOAK_REALM, clientId: KEYCLOAK_CLIENT_ID } });
+  res.json({
+    ok: true,
+    keycloak: { url: KEYCLOAK_URL, realm: KEYCLOAK_REALM, clientId: KEYCLOAK_CLIENT_ID },
+    integrations: {
+      chatwootUrl: process.env.CHATWOOT_URL || "",
+      n8nUrl: process.env.N8N_URL || "",
+    },
+  });
 });
 
 app.get("/health", async (_req, res) => {
@@ -233,6 +240,183 @@ vagasRouter.delete("/:id", authRequired, requireEmpresaSelected, requireRoleAny(
   } catch (e) { next(e); }
 });
 app.use("/api/vagas", vagasRouter);
+
+
+const rhRouter = express.Router();
+
+rhRouter.get("/vagas", authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const ativas = String(req.query.ativas || "") === "1";
+    const r = await q(`
+      SELECT id, titulo, lead, descricao, local_trabalho, linha, vinculo, modalidade, pcd,
+             inscricoes_ate, responsabilidades, requisitos, informacoes, etapas, links, ativa,
+             created_at AS criada_em, updated_at AS atualizada_em, publicada_em
+      FROM public.vagas
+      WHERE empresa = $1
+        AND ($2::boolean = FALSE OR ativa = TRUE)
+      ORDER BY id DESC
+    `, [req.empresa, ativas]);
+    res.json(r.rows);
+  } catch (e) { next(e); }
+});
+
+rhRouter.post("/vagas", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "vagas"), async (req, res, next) => {
+  try {
+    const b = req.body || {};
+    if (!b.titulo) return res.status(400).json({ ok: false, error: "titulo é obrigatório." });
+    const r = await q(`
+      INSERT INTO public.vagas (
+        empresa, titulo, lead, descricao, local_trabalho, linha, vinculo, modalidade, pcd, inscricoes_ate,
+        responsabilidades, requisitos, informacoes, etapas, links, ativa, status, setor, cidade, tipo, created_by
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+        $11,$12,$13,$14,$15,COALESCE($16, TRUE),COALESCE($17, 'aberta'),$18,$19,$20,$21
+      ) RETURNING id
+    `, [
+      req.empresa, String(b.titulo), b.lead || null, b.descricao || null, b.local_trabalho || null, b.linha || null, b.vinculo || null,
+      b.modalidade || null, !!b.pcd, b.inscricoes_ate || null, b.responsabilidades || null, b.requisitos || null, b.informacoes || null,
+      b.etapas || null, b.links ? JSON.stringify(b.links) : null, b.ativa, b.status || null, b.setor || null, b.cidade || null, b.tipo || null,
+      req.user.sub
+    ]);
+    res.json({ ok: true, id: r.rows[0].id });
+  } catch (e) { next(e); }
+});
+
+rhRouter.put("/vagas/:id", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "vagas"), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: "id inválido" });
+    const b = req.body || {};
+    await q(`
+      UPDATE public.vagas
+      SET titulo = COALESCE($1, titulo),
+          lead = COALESCE($2, lead),
+          descricao = COALESCE($3, descricao),
+          local_trabalho = COALESCE($4, local_trabalho),
+          linha = COALESCE($5, linha),
+          vinculo = COALESCE($6, vinculo),
+          modalidade = COALESCE($7, modalidade),
+          pcd = COALESCE($8, pcd),
+          inscricoes_ate = COALESCE($9, inscricoes_ate),
+          responsabilidades = COALESCE($10, responsabilidades),
+          requisitos = COALESCE($11, requisitos),
+          informacoes = COALESCE($12, informacoes),
+          etapas = COALESCE($13, etapas),
+          links = COALESCE($14::jsonb, links),
+          ativa = COALESCE($15, ativa),
+          status = COALESCE($16, status),
+          updated_at = now()
+      WHERE id = $17 AND empresa = $18
+    `, [
+      b.titulo ?? null, b.lead ?? null, b.descricao ?? null, b.local_trabalho ?? null, b.linha ?? null, b.vinculo ?? null, b.modalidade ?? null,
+      b.pcd !== undefined ? !!b.pcd : null, b.inscricoes_ate ?? null, b.responsabilidades ?? null, b.requisitos ?? null, b.informacoes ?? null,
+      b.etapas ?? null, b.links !== undefined ? JSON.stringify(b.links) : null, b.ativa !== undefined ? !!b.ativa : null, b.status ?? null, id, req.empresa
+    ]);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+rhRouter.delete("/vagas/:id", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "vagas"), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: "id inválido" });
+    await q(`DELETE FROM public.vagas WHERE id = $1 AND empresa = $2`, [id, req.empresa]);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+rhRouter.get("/vagas-publicas", async (req, res, next) => {
+  try {
+    const qText = String(req.query.q || "").trim();
+    const linha = String(req.query.linha || "").trim().toUpperCase();
+    const params = [];
+    let where = `WHERE ativa = TRUE`;
+    if (qText) {
+      params.push(`%${qText}%`);
+      where += ` AND (titulo ILIKE $${params.length} OR descricao ILIKE $${params.length})`;
+    }
+    if (linha) {
+      params.push(linha);
+      where += ` AND UPPER(COALESCE(linha, '')) LIKE '%' || $${params.length} || '%'`;
+    }
+    const r = await q(`
+      SELECT id, titulo, lead, descricao, local_trabalho, linha, vinculo, modalidade, pcd, inscricoes_ate,
+             responsabilidades, requisitos, informacoes, etapas, links, publicada_em, created_at AS criada_em, updated_at AS atualizada_em
+      FROM public.vagas ${where}
+      ORDER BY publicada_em DESC, id DESC
+    `, params);
+    res.json(r.rows);
+  } catch (e) { next(e); }
+});
+
+rhRouter.get("/vagas-publicas/:id", async (req, res, next) => {
+  try {
+    const id = Number(req.params.id); if (!id) return res.status(400).json({ ok: false, error: "id inválido" });
+    const r = await q(`
+      SELECT id, titulo, lead, descricao, local_trabalho, linha, vinculo, modalidade, pcd, inscricoes_ate,
+             responsabilidades, requisitos, informacoes, etapas, links, publicada_em, created_at AS criada_em, updated_at AS atualizada_em
+      FROM public.vagas
+      WHERE id = $1 AND ativa = TRUE
+      LIMIT 1
+    `, [id]);
+    if (!r.rowCount) return res.status(404).json({ ok: false, error: "Vaga não encontrada" });
+    res.json(r.rows[0]);
+  } catch (e) { next(e); }
+});
+
+rhRouter.get("/site-config", authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const r = await q(`SELECT etapas_padrao, sobre_ibmf FROM public.rh_site_config WHERE empresa = $1 LIMIT 1`, [req.empresa]);
+    res.json(r.rows[0] || { etapas_padrao: "", sobre_ibmf: "" });
+  } catch (e) { next(e); }
+});
+
+rhRouter.put("/site-config", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "vagas"), async (req, res, next) => {
+  try {
+    const { etapas_padrao = "", sobre_ibmf = "" } = req.body || {};
+    await q(`
+      INSERT INTO public.rh_site_config (empresa, etapas_padrao, sobre_ibmf, updated_by, updated_at)
+      VALUES ($1, $2, $3, $4, now())
+      ON CONFLICT (empresa) DO UPDATE
+      SET etapas_padrao = EXCLUDED.etapas_padrao,
+          sobre_ibmf = EXCLUDED.sobre_ibmf,
+          updated_by = EXCLUDED.updated_by,
+          updated_at = now()
+    `, [req.empresa, etapas_padrao, sobre_ibmf, req.user.sub]);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+rhRouter.get("/vagas-config", authRequired, requireEmpresaSelected, async (req, res, next) => {
+  try {
+    const r = await q(`SELECT etapas_padrao, sobre_ibmf FROM public.rh_site_config WHERE empresa = $1 LIMIT 1`, [req.empresa]);
+    res.json(r.rows[0] || { etapas_padrao: "", sobre_ibmf: "" });
+  } catch (e) { next(e); }
+});
+
+rhRouter.put("/vagas-config", authRequired, requireEmpresaSelected, requireRoleAny("portal_admin", "vagas"), async (req, res, next) => {
+  try {
+    const { etapas_padrao = "", sobre_ibmf = "" } = req.body || {};
+    await q(`
+      INSERT INTO public.rh_site_config (empresa, etapas_padrao, sobre_ibmf, updated_by, updated_at)
+      VALUES ($1, $2, $3, $4, now())
+      ON CONFLICT (empresa) DO UPDATE
+      SET etapas_padrao = EXCLUDED.etapas_padrao,
+          sobre_ibmf = EXCLUDED.sobre_ibmf,
+          updated_by = EXCLUDED.updated_by,
+          updated_at = now()
+    `, [req.empresa, etapas_padrao, sobre_ibmf, req.user.sub]);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+rhRouter.get("/site-config-public", async (req, res, next) => {
+  try {
+    const empresa = (req.query.empresa || "ARDAN").toString();
+    const r = await q(`SELECT etapas_padrao, sobre_ibmf FROM public.rh_site_config WHERE empresa = $1 LIMIT 1`, [empresa]);
+    res.json(r.rows[0] || { etapas_padrao: "", sobre_ibmf: "" });
+  } catch (e) { next(e); }
+});
+
+app.use("/api/rh", rhRouter);
 
 const contratosRouter = express.Router();
 contratosRouter.get("/", authRequired, requireEmpresaSelected, async (req, res, next) => {
