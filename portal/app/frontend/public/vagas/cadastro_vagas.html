@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro de Vagas</title>
+
+  <!-- Não indexar em buscadores (tela interna) -->
+  <meta name="robots" content="noindex,nofollow"/>
+
+ <main class="pc-container">
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>checkAuth();</script>
+
+  <!-- Layout claro, mesmo padrão visual das páginas brancas -->
+  <link rel="stylesheet" href="./css/cadastro_vagas.css">
+</head>
+<body>
+  <noscript>
+    <style>body{display:none!important}</style>
+    É necessário habilitar JavaScript para acessar esta página.
+  </noscript>
+
+  <!-- Topo -->
+  <header class="topbar">
+    <a class="btn back" href="/home.html">← Voltar ao painel</a>
+    <div class="spacer"></div>
+    <a class="btn ghost" target="_blank" rel="noopener noreferrer" href="/vagas/lista_vagas.html">
+      <span class="icon" aria-hidden="true">↗</span>
+      <span>Site de Vagas</span>
+    </a>
+  </header>
+
+  <main class="page">
+
+    <!-- ======= Bloco: Criar / Editar Vaga ======= -->
+    <section class="card">
+      <div class="card-header">
+        <h2 id="formTitle">Nova vaga</h2>
+        <div class="right">
+          <button id="btnCancelarEdicao" class="btn ghost hide" type="button">Cancelar edição</button>
+        </div>
+      </div>
+
+      <form id="formVaga" class="grid" autocomplete="on">
+        <input type="hidden" id="vagaId"/>
+
+        <div class="col">
+          <label for="titulo">Título da vaga</label>
+          <input id="titulo" type="text" placeholder="Ex.: Assistente Comercial"
+                 required maxlength="140" autocomplete="on" enterkeyhint="next">
+        </div>
+
+        <div class="col">
+          <label for="lead">Lead (subtítulo curto)</label>
+          <input id="lead" type="text" placeholder="Texto curto que aparece no topo da vaga"
+                 maxlength="200" autocomplete="on" enterkeyhint="next">
+        </div>
+
+        <div class="col2">
+          <label for="descricao">Descrição (texto livre)</label>
+          <textarea id="descricao" rows="4" placeholder="Descrição geral da vaga"
+                    maxlength="8000" enterkeyhint="done"></textarea>
+        </div>
+
+        <div class="col">
+          <label for="local_trabalho">Local de trabalho</label>
+          <input id="local_trabalho" type="text" placeholder="Ex.: Braço do Norte"
+                 maxlength="120" autocomplete="on" enterkeyhint="next">
+        </div>
+
+        <div class="col">
+          <label for="linha">Linha</label>
+          <!-- Agora com a 3ª opção (Ambas) -> valor "ARQUITECH,METASUL" -->
+          <select id="linha">
+            <option value="">— selecione —</option>
+            <option value="ARQUITECH">Arquitech</option>
+            <option value="METASUL">Metasul</option>
+            <option value="ARQUITECH,METASUL">Ambas (ARQUITECH + METASUL)</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label for="vinculo">Vínculo</label>
+          <select id="vinculo">
+            <option value="">—</option>
+            <option value="CLT">CLT</option>
+            <option value="PJ">PJ</option>
+            <option value="ESTÁGIO">Estágio</option>
+            <option value="MENOR APRENDIZ">Menor Aprendiz</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label for="modalidade">Modelo</label>
+          <select id="modalidade">
+            <option value="">—</option>
+            <option value="Presencial">Presencial</option>
+            <option value="Híbrido">Híbrido</option>
+            <option value="Remoto">Remoto</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label for="pcd">PcD</label>
+          <div class="checkline">
+            <input id="pcd" type="checkbox"><span>PcD</span>
+          </div>
+        </div>
+
+        <div class="col">
+          <label for="inscricoes_ate">Inscrições até</label>
+          <input id="inscricoes_ate" type="date" inputmode="numeric">
+        </div>
+
+        <!-- Campos “por vaga” -->
+        <div class="col2">
+          <label for="responsabilidades">Responsabilidades e Atribuições (1 por linha)</label>
+          <textarea id="responsabilidades" rows="4" placeholder="Ex.: Atender clientes;&#10;Emitir relatórios;..." maxlength="8000"></textarea>
+        </div>
+
+        <div class="col2">
+          <label for="requisitos">Requisitos e Qualificações (1 por linha)</label>
+          <textarea id="requisitos" rows="4" placeholder="Ex.: Excel intermediário;&#10;Experiência com atendimento;..." maxlength="8000"></textarea>
+        </div>
+
+        <div class="col2">
+          <label for="informacoes">Informações Adicionais (1 por linha)</label>
+          <textarea id="informacoes" rows="3" placeholder="Ex.: Horário comercial;&#10;VT e VR;..." maxlength="8000"></textarea>
+        </div>
+
+        <div class="actions">
+          <button id="btnSalvar" type="submit" class="btn primary">Salvar vaga</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ======= Bloco: Padrões Globais (1x para todo o site) ======= -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Padrões Globais (aplicam-se a todas as vagas)</h2>
+      </div>
+      <form id="formGlobais" class="grid" autocomplete="on">
+        <div class="col2">
+          <label for="etapas_padrao">Etapas do Processo (1 por linha)</label>
+          <textarea id="etapas_padrao" rows="4" placeholder="1. Cadastro&#10;2. Entrevista com RH&#10;3. Entrevista com Gestor(a)&#10;4. Proposta/Contratação" maxlength="4000"></textarea>
+        </div>
+
+        <div class="col2">
+          <label for="sobre_ibmf_padrao">Sobre a IBMF (texto livre)</label>
+          <textarea id="sobre_ibmf_padrao" rows="4" placeholder="Texto institucional que aparece em todas as vagas" maxlength="4000"></textarea>
+        </div>
+
+        <div class="actions">
+          <button id="btnSalvarGlobais" class="btn" type="submit">Salvar padrões</button>
+          <span id="globaisMsg" class="muted"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- ======= Lista de Vagas ======= -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Vagas cadastradas</h2>
+        <div class="right">
+          <label class="muted" for="fAtivas">Mostrar apenas ativas</label>
+          <input id="fAtivas" type="checkbox" checked>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tblVagas">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Título</th>
+              <th>Linha</th>
+              <th>Vínculo</th>
+              <th>Modelo</th>
+              <th>PcD</th>
+              <th>Criada em</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody><!-- linhas via JS --></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script da página -->
+  <script src="./js/cadastro_vagas.js" defer></script>
+</body>
+</html>

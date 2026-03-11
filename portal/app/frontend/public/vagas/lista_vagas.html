@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vagas | IBMF</title>
+
+  <!-- Reset simples e fonte -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS da página -->
+  <link rel="stylesheet" href="./css/lista_vagas.css">
+
+  <!-- (mantido do seu arquivo) -->
+</head>
+<body>
+  <header class="topbar" role="banner">
+    <div class="brand">
+      <img class="brand-img" src="./assets/logo-ibmf-met-arq.png" alt="IBMF" />
+    </div>
+  </header>
+
+  <main class="page" role="main">
+    <!-- BUSCA -->
+    <section class="search-wrap" aria-label="Busca de vagas">
+      <div class="search">
+        <input id="q" type="text" placeholder="Buscar vagas" autocomplete="off" />
+        <button id="btnSearch" aria-label="Buscar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M21 21l-4.3-4.3M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <p class="hint">Dica: busque por “Assistente”, “Marketing”, “Arquitech”, “Metasul”...</p>
+    </section>
+
+    <!-- GRID DE VAGAS -->
+    <section aria-label="Resultados">
+      <div id="gridVagas" class="grid" aria-live="polite" aria-busy="false">
+        <!-- itens renderizados via JS -->
+      </div>
+
+      <!-- estados -->
+      <div id="empty" class="empty hidden">
+        Nenhuma vaga encontrada.
+      </div>
+
+      <div id="error" class="error hidden" role="alert">
+        Ocorreu um erro ao carregar as vagas. Tente novamente.
+      </div>
+    </section>
+  </main>
+
+  <!-- JS da página -->
+  <script src="./js/lista_vagas.js"></script>
+</body>
+</html>

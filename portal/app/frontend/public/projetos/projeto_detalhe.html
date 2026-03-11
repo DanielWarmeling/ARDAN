@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<title>Projeto • Detalhe</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Icons: Phosphor Icons (Modern, clean) -->
+<link href="css/projeto_detalhe.css" rel="stylesheet">
+</link></head>
+<body>
+<div class="app">
+<!-- Sidebar Navigation -->
+<aside class="sidebar">
+<div class="sidebar-header">
+<div class="brand">
+<div class="brand-logo">
+<i class="ph-fill ph-squares-four"></i>
+</div>
+<div class="brand-info">
+<span class="brand-name">Portal</span>
+<span class="brand-desc">Workspace</span>
+</div>
+</div>
+</div>
+<nav class="nav">
+<div class="nav-group">
+<span class="nav-label">Menu</span>
+<a class="nav-item active" href="/projetos/projetos.html">
+<i class="ph ph-folder-open"></i>
+<span>Projetos</span>
+</a>
+</div>
+<div class="sidebar-footer">
+<div class="user-card">
+<div class="user-avatar" id="u-avatar">U</div>
+<div class="user-info">
+<span class="user-name" id="u-name">Usuário</span>
+<span class="user-role" id="u-role">Visitante</span>
+</div>
+<button class="btn-icon-ghost" id="btn-logout" title="Sair">
+<i class="ph ph-sign-out"></i>
+</button>
+</div>
+</div>
+</nav></aside>
+<!-- Main Content -->
+<main class="main">
+<!-- Top Header -->
+<header class="topbar">
+<div class="topbar-left">
+<nav class="breadcrumbs">
+<a class="crumb-link" href="/projetos/projetos.html">Projetos</a>
+<i class="ph ph-caret-right crumb-sep"></i>
+<span class="crumb-current" id="p-crumb">Detalhe</span>
+</nav>
+<div class="title-wrapper">
+<h1 id="p-title">Carregando...</h1>
+<div class="status-badge" id="p-status-badge">
+<span class="status-dot"></span>
+<span id="p-status">-</span>
+</div>
+</div>
+<div class="meta-row">
+<div class="meta-item">
+<i class="ph ph-buildings"></i>
+<span id="p-setor">-</span>
+</div>
+<div class="meta-item">
+<i class="ph ph-user-circle"></i>
+<span id="p-resp">-</span>
+</div>
+</div>
+</div>
+<div class="topbar-actions">
+<button class="btn btn-secondary" id="btn-refresh">
+<i class="ph ph-arrows-clockwise"></i>
+<span>Atualizar</span>
+</button>
+<button class="btn btn-danger-ghost" id="btn-cancelar-projeto">
+<i class="ph ph-x-circle"></i>
+<span>Cancelar Projeto</span>
+</button>
+</div>
+</header>
+<div class="content-area">
+<!-- Tabs Navigation -->
+<div class="tabs-container">
+<div class="tabs">
+<button class="tab" data-tab="triagem" id="tab-btn-triagem">
+<i class="ph ph-gavel"></i>
+              Triagem
+            </button>
+<button class="tab active" data-tab="tarefas">
+<i class="ph ph-check-square"></i>
+              Tarefas
+            </button>
+<button class="tab" data-tab="kanban">
+<i class="ph ph-kanban"></i>
+              Kanban
+            </button>
+<button class="tab" data-tab="cronograma">
+<i class="ph ph-calendar"></i>
+              Cronograma
+            </button>
+</div>
+</div>
+<!-- TRIAGEM TAB -->
+<section class="tab-content hidden" id="tab-triagem">
+<div class="panel">
+  <div class="panel-header">
+    <div class="panel-title">
+      <h2>Triagem (Centro de Controle)</h2>
+      <p>Aprovação inicial (quando houver) e dossiê integrado (histórico completo).</p>
+    </div>
+  </div>
+
+  <div class="grid-layout">
+    <!-- Aprovação Inicial -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Aprovação Inicial</h3>
+        <span class="badge-soft">Tipo: PROJETO</span>
+      </div>
+      <div class="list-container" id="triagem-inicial-list"></div>
+      <div class="empty-state" id="triagem-inicial-empty">
+        <div class="empty-icon"><i class="ph ph-check-circle"></i></div>
+        <p>Nenhuma aprovação inicial pendente.</p>
+      </div>
+    </div>
+<!-- Status + Histórico -->
+    <div class="card info-card">
+      <div class="card-header">
+        <h3>Status & Histórico</h3>
+      </div>
+
+      <div class="status-display">
+        <div class="kv-item">
+          <span class="label">Status Atual</span>
+          <span class="value highlight" id="triagem-status">-</span>
+        </div>
+        <div class="kv-item">
+          <span class="label">Último Motivo (Reprovação)</span>
+          <span class="value" id="triagem-ultimo-motivo">-</span>
+        </div>
+      </div>
+
+      <div class="list-container" id="triagem-historico-list" style="margin-top:12px;"></div>
+      <div class="empty-state" id="triagem-historico-empty">
+        <div class="empty-icon"><i class="ph ph-clock-counter-clockwise"></i></div>
+        <p>Sem eventos recentes.</p>
+      </div>
+
+      <div class="info-box" style="margin-top:12px;">
+        <h4><i class="ph ph-info"></i> Regras</h4>
+        <ul>
+          <li><b>Reprovação (triagem ou execução):</b> sempre cria uma nova tarefa dinâmica de retorno.</li>
+          <li><b>Dossiê:</b> fica integrado abaixo (não é mais aba separada).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dossiê integrado (embaixo da Triagem) -->
+<div class="panel" id="dossie-integrado">
+<div class="panel">
+<div class="panel-header with-controls">
+<div class="panel-title">
+<h2>Dossiê do Projeto</h2>
+<p>Registro histórico completo e imutável.</p>
+</div>
+<div class="actions">
+<button class="btn btn-secondary" id="btn-print-dossie">
+<i class="ph ph-printer"></i> Imprimir
+                </button>
+<button class="btn btn-secondary" id="btn-recarregar-dossie">
+<i class="ph ph-arrow-clockwise"></i>
+</button>
+</div>
+</div>
+<div class="dossie-grid">
+<div class="dossie-card">
+<div class="dossie-header">
+<h3><i class="ph ph-camera"></i> Snapshot Inicial</h3>
+</div>
+<div class="kv-grid" id="dossie-snapshot"></div>
+</div>
+<div class="dossie-card">
+<div class="dossie-header">
+<h3><i class="ph ph-stamp"></i> Histórico do Projeto</h3>
+</div>
+<div class="simple-list" id="dossie-aprovacoes"></div>
+<div class="empty-text" id="dossie-aprovacoes-empty">Sem registros.</div>
+</div>
+<div class="dossie-card">
+<div class="dossie-header">
+<h3><i class="ph ph-list-checks"></i> Execução de Tarefas</h3>
+</div>
+<div class="simple-list" id="dossie-tarefas"></div>
+<div class="empty-text" id="dossie-tarefas-empty">Sem tarefas registradas.</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- TAREFAS TAB -->
+<section class="tab-content" id="tab-tarefas">
+<div class="panel">
+<div class="panel-header with-controls">
+<div class="panel-title">
+<h2>Lista de Tarefas</h2>
+</div>
+<div class="filters-bar">
+<div class="input-group search-group">
+<i class="ph ph-magnifying-glass"></i>
+<input id="f-text" placeholder="Buscar tarefas..."/>
+</div>
+<div class="input-group">
+<select id="f-status">
+<option value="">Todos os Status</option>
+<option value="SOLICITADO">Solicitado</option>
+<option value="ABERTA">Aberta</option>
+<option value="EM_ANDAMENTO">Em Andamento</option>
+<option value="AGUARDANDO_INFORMACAO">Aguardando Info</option>
+<option value="CONCLUIDA">Concluída</option>
+</select>
+</div>
+<div class="input-group">
+<select id="f-tipo">
+<option value="">Todos os Tipos</option>
+<option value="OFICIAL">Oficial</option>
+<option value="RETORNO">Retorno</option>
+<option value="LIVRE">Livre</option>
+</select>
+</div>
+<div class="filter-actions">
+<button class="btn btn-primary" id="btn-filtrar">Filtrar</button>
+<button class="btn btn-ghost" id="btn-limpar">Limpar</button>
+</div>
+</div>
+</div>
+<div class="task-list-container" id="tarefas-list"></div>
+<div class="empty-state" id="tarefas-empty">
+<div class="empty-icon"><i class="ph ph-list-dashes"></i></div>
+<p>Nenhuma tarefa encontrada com os filtros atuais.</p>
+</div>
+</div>
+</section>
+<!-- KANBAN TAB -->
+<section class="tab-content hidden" id="tab-kanban">
+<div class="kanban-container">
+<div class="kanban-header">
+<div class="panel-title">
+<h2>Fluxo de Trabalho</h2>
+</div>
+<div class="kanban-actions">
+<button class="btn btn-secondary" id="btn-gerenciar-colunas">
+<i class="ph ph-columns"></i> Gerenciar Etapas
+                </button>
+<button class="btn btn-primary" id="btn-nova-tarefa">
+<i class="ph ph-plus"></i> Nova Tarefa
+                </button>
+</div>
+</div>
+<div class="kanban-board" id="kanban"></div>
+<div class="empty-state" id="kanban-empty">
+<p>O quadro Kanban não possui etapas configuradas.</p>
+</div>
+</div>
+</section>
+<!-- CRONOGRAMA TAB -->
+<section class="tab-content hidden" id="tab-cronograma">
+<div class="panel">
+<div class="panel-header">
+<div class="panel-title">
+<h2>Cronograma</h2>
+<p>Linha do tempo prevista para execução das tarefas.</p>
+</div>
+</div>
+<div class="timeline-list" id="cronograma"></div>
+<div class="empty-state" id="cronograma-empty">
+<div class="empty-icon"><i class="ph ph-calendar-x"></i></div>
+<p>Sem dados de cronograma disponíveis.</p>
+</div>
+</div>
+</section>
+
+
+</div>
+</main>
+</div>
+<!-- MODALS -->
+<div class="modal-backdrop hidden" id="modal-backdrop"></div>
+<!-- Modal Reprovar -->
+<div class="modal hidden" id="modal-reprovar">
+<div class="modal-content modal-lg">
+<div class="modal-header">
+<h3>Reprovar Aprovação</h3>
+<button class="btn-icon-ghost" data-close="modal-reprovar"><i class="ph ph-x"></i></button>
+</div>
+<div class="modal-body">
+<div class="info-block" id="reprovar-info">-</div>
+<div class="form-group">
+<label>Motivo da Reprovação <span class="required">*</span></label>
+<textarea id="reprovar-motivo" placeholder="Descreva o que precisa ser ajustado..." rows="4"></textarea>
+</div>
+<div class="form-group" style="margin-top:12px;">
+  <label>Modelo da Tarefa de Retorno <span class="required">*</span></label>
+  <select id="reprovar-tarefa-modelo">
+    <option value="">Carregando modelos...</option>
+  </select>
+  <div class="hint" style="margin-top:6px;">A reprovação sempre cria uma tarefa dinâmica usando este modelo.</div>
+</div>
+
+<div class="form-grid" style="margin-top:14px;">
+  <div class="form-group">
+    <label>Prazo (opcional)</label>
+    <div class="checkline">
+      <input type="checkbox" id="next-prazo-ativo" />
+      <span>Ativar controle de prazo</span>
+    </div>
+    <div class="hint" style="margin-top:6px;">Se ativado: no último dia fica em <b>atenção</b>, depois fica em <b>atraso</b>.</div>
+  </div>
+  <div class="form-group">
+    <label>Dias</label>
+    <input id="next-prazo-dias" type="number" min="1" placeholder="Ex: 3" />
+  </div>
+
+  <div class="form-group" style="grid-column:1/-1;">
+    <label>Anexo (opcional)</label>
+    <input id="next-upload" type="file" />
+    <div class="hint" style="margin-top:6px;">O arquivo será salvo no banco (Postgres).</div>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" data-close="modal-reprovar">Cancelar</button>
+<button class="btn btn-danger" id="btn-confirmar-reprovar">Confirmar Reprovação</button>
+</div>
+</div>
+</div>
+<!-- Modal Cancelar -->
+<div class="modal hidden" id="modal-cancelar">
+<div class="modal-content modal-lg">
+<div class="modal-header">
+<h3>Cancelar Projeto</h3>
+<button class="btn-icon-ghost" data-close="modal-cancelar"><i class="ph ph-x"></i></button>
+</div>
+<div class="modal-body">
+<div class="alert-box warning">
+<i class="ph ph-warning"></i>
+<p>Esta ação é irreversível. O projeto será encerrado e arquivado.</p>
+</div>
+<div class="form-group">
+<label>Confirmação</label>
+<input id="cancelar-confirmacao" placeholder="Digite CANCELAR para confirmar"/>
+</div>
+<div class="form-group">
+<label>Motivo do Cancelamento <span class="required">*</span></label>
+<textarea id="cancelar-motivo" placeholder="Por que este projeto está sendo cancelado?" rows="4"></textarea>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" data-close="modal-cancelar">Voltar</button>
+<button class="btn btn-danger" id="btn-confirmar-cancelar">Encerrar Projeto</button>
+</div>
+</div>
+</div>
+<!-- Modal Nova Tarefa -->
+<div class="modal hidden" id="modal-tarefa">
+<div class="modal-content modal-lg">
+<div class="modal-header">
+<h3>Nova Tarefa</h3>
+<button class="btn-icon-ghost" data-close="modal-tarefa"><i class="ph ph-x"></i></button>
+</div>
+<div class="modal-body">
+<div class="grid-2">
+<div class="form-group">
+<label>Título</label>
+<input id="nt-titulo" placeholder="Ex: Orçamento de Materiais"/>
+</div>
+<div class="form-group">
+<label>Tipo</label>
+<div class="select-wrapper">
+<select id="nt-tipo">
+<option value="OFICIAL">OFICIAL</option>
+<option value="LIVRE">LIVRE</option>
+</select>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label>Descrição</label>
+<textarea id="nt-desc" placeholder="Detalhes do que precisa ser feito..." rows="4"></textarea>
+</div>
+<div class="grid-2">
+<div class="form-group">
+<label>Etapa (Coluna)</label>
+<div class="select-wrapper">
+<select id="nt-coluna"></select>
+</div>
+</div>
+<div class="form-group">
+<label>Obrigatória?</label>
+<div class="select-wrapper">
+<select id="nt-obrigatoria">
+<option value="false">Não</option>
+<option value="true">Sim</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" data-close="modal-tarefa">Cancelar</button>
+<button class="btn btn-primary" id="btn-criar-tarefa">Criar Tarefa</button>
+</div>
+</div>
+</div>
+
+<!-- Modal Finalizar Tarefa -->
+
+<!-- Modal: Ações da tarefa (Kanban) -->
+<div class="modal hidden" id="modal-task-actions">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h3 id="task-actions-title">Tarefa</h3>
+        <div class="modal-sub" id="task-actions-meta"></div>
+      </div>
+      <button class="btn-icon-ghost" data-close="modal-task-actions"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="task-actions-buttons" class="actions-stack"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="modal-task-actions">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Recusar tarefa -->
+<div class="modal hidden" id="modal-recusar">
+  <div class="modal-content modal-lg">
+    <div class="modal-header">
+      <div>
+        <h3 id="recusar-title">Recusar</h3>
+        <div class="modal-sub">Informe o motivo e (opcional) adicione campos que precisam ser respondidos para concluir a tarefa.</div>
+      </div>
+      <button class="btn-icon-ghost" data-close="modal-recusar"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Motivo da recusa <span class="required"> *</span></label>
+          <textarea id="recusar-motivo" rows="4" placeholder="Explique o que falta para conseguir executar a tarefa..."></textarea>
+        </div>
+      </div>
+
+      <div class="section-title-row">
+        <h4>Campos adicionais solicitados (opcional)</h4>
+        <button class="btn btn-secondary" id="btn-add-campo-recusar"><i class="ph ph-plus"></i> Adicionar campo</button>
+      </div>
+
+      <div id="recusar-campos"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="modal-recusar">Cancelar</button>
+      <button class="btn btn-danger" id="btn-confirmar-recusar"><i class="ph ph-x"></i> Confirmar recusa</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal hidden" id="modal-finalizar">
+<div class="modal-content">
+<div class="modal-header">
+<h3 id="finalizar-title">Finalizar tarefa</h3>
+<button class="btn-icon-ghost" data-close="modal-finalizar"><i class="ph ph-x"></i></button>
+</div>
+<div class="modal-body">
+<div class="section">
+<h4>Execução (preencha os campos)</h4>
+<div id="finalizar-campos"></div>
+</div>
+
+<div class="section" style="margin-top:16px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;" id="finalizar-next-head">
+    <h4>Próximas tarefas</h4>
+    <button class="btn btn-secondary" id="btn-open-next"><i class="ph ph-plus"></i> Adicionar</button>
+  </div>
+
+  <div class="empty-text" id="finalizar-next-empty" style="margin-top:10px;">Nenhuma próxima tarefa criada ainda.</div>
+  <div class="list" id="finalizar-next-list" style="margin-top:10px;"></div>
+
+  <div class="hint" id="finalizar-next-hint" style="margin-top:10px;">
+    Nesta tela você só registra a execução da sua tarefa. A criação de próximas tarefas é feita no planejamento (Admin / Planejar).
+  </div>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+
+<button class="btn btn-ghost" data-close="modal-finalizar">Cancelar</button>
+<button class="btn btn-primary" id="btn-confirmar-finalizar">Confirmar Execução</button>
+</div>
+</div>
+</div>
+<!-- Modal Adicionar Próxima Tarefa -->
+<div class="modal hidden" id="modal-next">
+<div class="modal-content">
+<div class="modal-header">
+<h3>Adicionar próxima tarefa</h3>
+<button class="btn-icon-ghost" data-close="modal-next"><i class="ph ph-x"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-grid">
+<div class="form-group">
+<label>Coluna (etapa) <span class="required">*</span></label>
+<select id="next-coluna"></select>
+</div>
+<div class="form-group">
+<label>Setor responsável</label>
+<select id="next-setor"></select>
+</div>
+<div class="form-group" id="next-save-model-wrap" style="grid-column:1/-1; display:none;">
+  <label>Salvar como modelo (opcional)</label>
+  <div class="checkline">
+    <input type="checkbox" id="next-save-modelo" />
+    <span>Salvar esta tarefa manual como modelo para este setor</span>
+  </div>
+  <div class="hint" style="margin-top:8px;">Dica: escolha um setor responsável para poder salvar como modelo.</div>
+  <div class="form-grid" id="next-save-model-fields" style="margin-top:10px; display:none;">
+    <div class="form-group" style="grid-column:1/-1;">
+      <label>Nome do modelo <span class="required">*</span></label>
+      <input id="next-modelo-nome" placeholder="Ex: Cotação de fornecedores (Compras)"/>
+    </div>
+    <div class="form-group" style="grid-column:1/-1;">
+      <label>Descrição do modelo</label>
+      <textarea id="next-modelo-descricao" rows="2" placeholder="Opcional..."></textarea>
+    </div>
+  </div>
+</div>
+<div class="form-group" style="grid-column:1/-1;">
+<label>Modelo de tarefa</label>
+<select id="next-modelo"></select>
+</div>
+<div class="form-group hidden" id="next-manual-fields" style="grid-column:1/-1;">
+<label>Campos da tarefa (execução)</label>
+<div class="fields-list" id="next-fields-list"></div>
+<button class="btn btn-secondary" id="btn-add-field" type="button"><i class="ph ph-plus"></i> Adicionar campo</button>
+<div class="hint" style="margin-top:8px;">Dica: tarefas manuais precisam ter campos para a execução ficar registrada no dossiê.</div>
+</div>
+<div class="form-group" style="grid-column:1/-1;">
+<label>Título (opcional se usar modelo)</label>
+<input id="next-titulo" placeholder="Ex: Cotar fornecedores / Validar preço / Criar pedido..."/>
+</div>
+<div class="form-group" style="grid-column:1/-1;">
+<label>Descrição</label>
+<textarea id="next-descricao" placeholder="Detalhe o que precisa ser feito..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" data-close="modal-next">Cancelar</button>
+<button class="btn btn-primary" id="btn-add-next">Adicionar</button>
+</div>
+</div>
+</div>
+
+
+
+<script src="/js/config.js"></script><script src="/js/auth.js"></script><script src="js/projeto_detalhe.js"></script></body>
+</html>

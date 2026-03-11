@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Candidatos da Vaga</title>
+
+<main class="pc-container">
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>checkAuth();</script>
+
+  <!-- CSS (vamos ajustar depois) -->
+  <link rel="stylesheet" href="./css/candidatos.css">
+</head>
+<body>
+  <!-- Topbar -->
+  <header class="topbar">
+    <a class="btn-back" href="./cadastro_vagas.html">← Voltar</a>
+    <div class="brand"><img class="brand-img" src="../img/logo-ibmf.svg" alt="IBMF"></div>
+  </header>
+
+  <main class="page">
+    <!-- Resumo da vaga -->
+    <section class="card">
+      <div class="card-head">
+        <h1 id="vagaTitulo">Candidatos</h1>
+      </div>
+      <div id="vagaResumo" class="muted"></div>
+    </section>
+
+    <!-- Candidaturas (apenas o novo fluxo em BYTEA no Postgres) -->
+    <section class="card">
+      <div class="card-head">
+        <h2 style="margin:0">Candidaturas</h2>
+        <div class="meta-line">
+          <input id="q" type="search" placeholder="Filtrar por nome/email/origem…">
+          <button id="btnClear" class="btn-sm" type="button">Limpar</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tblUp">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>WhatsApp</th>
+              <th>Origem</th>
+              <th>LGPD</th>
+              <th>Criada em</th>
+              <th>Arquivo</th>
+            </tr>
+          </thead>
+          <tbody><!-- preenchido via JS --></tbody>
+        </table>
+      </div>
+      <div id="upEmpty" class="muted status"></div>
+    </section>
+  </main>
+
+  <!-- JS da página -->
+  <script src="./js/candidatos.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+/* ================================
+   Candidatos (padrão páginas brancas)
+   ================================ */
+:root{
+  --bg:#f6f8fb;
+  --card:#fff;
+  --text:#1f2430;
+  --muted:#6b7280;
+  --brand:#4f46e5;
+  --line:#e9edf5;
+  --shadow:0 8px 32px rgba(16,24,40,.08);
+  --radius:12px;
+
+  /* Semânticas */
+  --ok:#16a34a;
+  --warn:#f59e0b;
+  --danger:#dc2626;
+}
+
+/* Base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: Montserrat, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+a{color:inherit}
+
+/* Topbar */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px;
+  background:var(--card);
+  box-shadow:var(--shadow);
+}
+.page-title{margin:0; font-size:18px; font-weight:700}
+.spacer{flex:1}
+
+/* Botões */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:8px 12px; border-radius:10px;
+  border:1px solid var(--line); background:#fff; color:var(--text);
+  cursor:pointer; text-decoration:none; transition:.15s ease;
+  user-select:none;
+}
+.btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px rgba(16,24,40,.10)}
+.btn:active{transform:translateY(0)}
+.btn[disabled]{opacity:.5; cursor:default; transform:none; box-shadow:none}
+
+/* Variações */
+.btn.primary{background:var(--brand); color:#fff; border-color:transparent}
+.btn.ghost{background:#fff}
+.btn.back{background:#fff; border:1px solid var(--line)}
+.btn-back{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:10px; border:1px solid var(--line);
+  text-decoration:none; color:var(--text); background:#fff;
+}
+
+/* Layout */
+.page{max-width:1100px; margin:24px auto; padding:0 16px}
+.card{
+  background:var(--card); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:16px;
+}
+.card + .card{margin-top:20px}
+.card-header{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  margin-bottom:12px;
+}
+.card-header h2{margin:0; font-size:18px}
+
+/* Vaga (resumo) */
+.vaga-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px 16px;
+  font-size:14px;
+}
+.vaga-grid strong{font-weight:600}
+
+/* Campo de busca */
+#q{
+  padding:8px 10px; border:1px solid var(--line); border-radius:10px;
+  min-width:260px; outline:none; background:#fff;
+}
+#q:focus{border-color:#dcd8f8; box-shadow:0 0 0 4px rgba(79,70,229,.12)}
+#btnClear{margin-left:8px}
+
+/* Tabelas */
+.table-wrap{
+  overflow:auto; border:1px solid var(--line); border-radius:10px;
+}
+.table-title{
+  margin:0 0 8px 4px; font-size:14px; color:var(--muted);
+}
+table{width:100%; border-collapse:separate; border-spacing:0}
+thead th{
+  position:sticky; top:0; z-index:1;
+  background:#f5f3ff; font-weight:600;
+  font-size:13px; color:#2e266f;
+  border-bottom:1px solid var(--line);
+}
+th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; font-size:14px}
+tr:last-child td{border-bottom:none}
+
+/* Ações dentro da tabela */
+td .btn{padding:6px 10px; border-radius:8px}
+td select{
+  height:34px; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:#fff;
+}
+
+/* Badges/estados */
+.badge{
+  display:inline-block; padding:2px 8px; border-radius:999px;
+  border:1px solid var(--line); font-size:12px; line-height:20px;
+  background:#fff;
+}
+.badge.ok{background:#ecfdf5; border-color:#bbf7d0; color:#065f46}
+.badge.warn{background:#fffbeb; border-color:#fde68a; color:#92400e}
+.badge.no{background:#fff1f2; border-color:#fecdd3; color:#9f1239}
+
+/* Divider */
+.divider{
+  margin:16px 0; height:1px; border:none; background:var(--line);
+}
+
+/* Estados de vazio/erro */
+.muted{color:var(--muted)}
+.muted.center{text-align:center; padding:10px}
+
+/* Responsivo */
+@media (max-width: 900px){
+  .vaga-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width: 640px){
+  .card{padding:12px}
+  .card-header{flex-direction:column; align-items:flex-start}
+  .vaga-grid{grid-template-columns:1fr}
+  #q{min-width:0; width:100%}
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Candidatura | Gerar currículo</title>
+
+  <!-- Fonte padrão do site -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS específico desta página -->
+  <link rel="stylesheet" href="./css/candidatar_gerar.css">
+  <link rel="icon" href="../assets/ibmf-favicon.png">
+
+  <!-- jsPDF (usado se o CSP permitir; se não, usamos fallback no JS) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./lista_vagas.html" aria-label="Voltar para vagas">
+        <img src="./assets/logo-ibmf-met-arq.png" alt="IBMF" />
+      </a>
+      <h1 class="titulo">Candidatura — Gerar currículo</h1>
+    </div>
+  </header>
+
+  <main class="wrap main">
+    <section class="card">
+      <p class="desc">
+        Preencha seus dados e nós geramos seu currículo em PDF automaticamente.
+      </p>
+
+      <form id="formCandidatura" class="grid" autocomplete="on">
+        <input type="hidden" id="vagaId" name="vaga_id" />
+
+        <!-- Nome -->
+        <div class="col2">
+          <label for="nome_completo">Nome completo *</label>
+          <input id="nome_completo" type="text" maxlength="200" required />
+        </div>
+
+        <!-- CPF + Nascimento -->
+        <div class="col1">
+          <label for="cpf">CPF (11 dígitos) *</label>
+          <input id="cpf" type="text" inputmode="numeric" maxlength="11" required />
+        </div>
+        <div class="col1">
+          <label for="data_nasc">Data de nascimento (dd/mm/aaaa) *</label>
+          <input id="data_nasc" type="text" placeholder="dd/mm/aaaa" maxlength="10" required />
+        </div>
+
+        <!-- Contato -->
+        <div class="col1">
+          <label for="ddd">DDD (2 dígitos) *</label>
+          <input id="ddd" type="text" inputmode="numeric" maxlength="2" required />
+        </div>
+        <div class="col1">
+          <label for="telefone">Telefone *</label>
+          <input id="telefone" type="text" inputmode="numeric" maxlength="9" required />
+        </div>
+
+        <div class="col2">
+          <label for="email">E-mail *</label>
+          <input id="email" type="email" maxlength="200" required />
+        </div>
+
+        <!-- Endereço -->
+        <div class="col2">
+          <label for="endereco">Endereço *</label>
+          <input id="endereco" type="text" maxlength="250" required />
+        </div>
+
+        <div class="col1">
+          <label for="bairro">Bairro *</label>
+          <input id="bairro" type="text" maxlength="120" required />
+        </div>
+        <div class="col1">
+          <label for="cidade">Cidade *</label>
+          <input id="cidade" type="text" maxlength="120" required />
+        </div>
+
+        <!-- Grau de instrução -->
+        <div class="col2">
+          <label for="grau_instrucao">Grau de Instrução *</label>
+          <select id="grau_instrucao" required>
+            <option value="">Selecione…</option>
+            <option>Analfabeto</option>
+            <option>Ensino Fundamental Incompleto</option>
+            <option>Ensino Fundamental Completo</option>
+            <option>Ensino Médio Incompleto</option>
+            <option>Ensino Médio Completo</option>
+            <option>Ensino Superior Incompleto</option>
+            <option>Ensino Superior Completo</option>
+          </select>
+        </div>
+
+        <!-- Experiências -->
+        <div class="col2">
+          <label for="experiencias">Experiências profissionais *</label>
+          <textarea id="experiencias" rows="5" maxlength="4000"
+            placeholder="Descreva suas experiências mais relevantes…" required></textarea>
+        </div>
+
+        <!-- Horário desejado -->
+        <div class="col2">
+          <label for="horario">Horário que deseja trabalhar *</label>
+          <select id="horario" required>
+            <option value="">Selecione…</option>
+            <option>Qualquer horário</option>
+            <option>23h18 às 05h</option>
+            <option>05h às 14h18</option>
+            <option>14h18 às 23h18</option>
+            <option>07h12 às 17h30</option>
+            <option>07h30 às 17h30</option>
+          </select>
+        </div>
+
+        <!-- Já trabalhou na empresa -->
+        <div class="col2">
+          <span class="label">Já trabalhou na nossa empresa? *</span>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="ja_trabalhou" value="Sim" required>
+              Sim
+            </label>
+            <label>
+              <input type="radio" name="ja_trabalhou" value="Não">
+              Não
+            </label>
+          </div>
+        </div>
+
+        <!-- Origem da vaga -->
+        <div class="col2">
+          <label for="origem_vaga">Onde você viu essa vaga? *</label>
+          <select id="origem_vaga" required>
+            <option value="">Selecione…</option>
+            <option>Site IBMF</option>
+            <option>LinkedIn</option>
+            <option>Instagram</option>
+            <option>Indicação</option>
+            <option>Indeed</option>
+            <option>Infojobs</option>
+            <option>Jornal / Rádio / TV</option>
+            <option>Outros</option>
+          </select>
+        </div>
+
+        <!-- LGPD com link para termos -->
+        <div class="col2 lgpd">
+          <label class="check">
+            <input id="lgpd" type="checkbox" />
+            <span>
+              Concordo com o uso dos meus dados conforme a
+              <a href="/vagas/termos.html" target="_blank" rel="noopener noreferrer">
+                Política de Privacidade (LGPD)
+              </a>.
+            </span>
+          </label>
+        </div>
+
+        <!-- hCaptcha -->
+        <div class="col2">
+          <label>Verificação humana *</label>
+          <div class="h-captcha"
+               data-sitekey="cc12c2f6-34c0-405a-a782-d082c8e8ab84"
+               data-theme="light"
+               data-callback="onHCaptchaSuccess"
+               data-expired-callback="onHCaptchaExpired"
+               data-error-callback="onHCaptchaError"></div>
+        </div>
+
+        <div class="actions">
+          <button id="btnEnviar" class="btn" type="submit" disabled>
+            Gerar PDF &amp; Enviar
+          </button>
+          <button id="btnCancelar" class="btn btn-outline" type="button">
+            Cancelar
+          </button>
+        </div>
+
+        <p id="msg" class="msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <!-- hCaptcha -->
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  <!-- JS específico desta página -->
+  <script src="./js/candidatar_gerar.js" defer></script>
+</body>
+</html>

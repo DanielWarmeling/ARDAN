@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Links</title>
+
+  <link rel="stylesheet" href="css/links.css" />
+</head>
+<body>
+  <div class="page">
+
+    <main class="wrap">
+      <div class="hero">
+        <h1 class="hero-title">Links</h1>
+        <p class="hero-sub">Acesso centralizado de recursos e links corporativos.</p>
+      </div>
+
+      <div class="section-label">
+        <span class="dots" aria-hidden="true">▦</span>
+        <span>ACESSO RÁPIDO</span>
+      </div>
+
+      <div id="links" class="links-list"></div>
+      <div id="msg" class="msg"></div>
+
+      <footer class="footer">
+        © <span id="year"></span> Portal IBMF. Todos os direitos reservados.
+      </footer>
+    </main>
+
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <script src="../js/config.js"></script>
+  <script src="js/links_public.js"></script>
+</body>
+</html>

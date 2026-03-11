@@ -1,0 +1,50 @@
+Configuração do Keycloak para o Portal
+
+Realm:
+- cloud-auth
+
+Client:
+- portal-web
+- Client authentication: OFF
+- Standard flow: ON
+- Root URL: http://SEU_IP:7071
+- Home URL: http://SEU_IP:7071
+- Valid redirect URIs:
+  - http://SEU_IP:7071/*
+- Web origins:
+  - +
+
+Roles do client portal-web:
+- portal_admin
+- projetos
+- projetos_admin
+- contratos
+- links
+- vagas
+- usuarios_admin
+
+Groups para multiempresa:
+- /empresas/ARDAN
+- /empresas/IBMF
+- /empresas/METASUL
+
+Mapper obrigatório:
+- criar client scope "groups"
+- mapper tipo Group Membership
+- claim: groups
+- Full group path: ON
+- Add to access token: ON
+- Add to ID token: ON
+- vincular no client portal-web como Default scope
+
+Usuário teste:
+- adicionar no grupo /empresas/ARDAN
+- atribuir role portal_admin
+
+Subida:
+- docker compose up -d --build
+
+Testes:
+- /health
+- abrir /home.html
+- depois de logar, testar /api/me

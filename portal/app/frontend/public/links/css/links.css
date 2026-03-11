@@ -1,0 +1,133 @@
+:root{
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --shadow: 0 10px 28px rgba(15, 23, 42, .06);
+  --radius: 12px;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page{ min-height: 100vh; }
+
+.wrap{
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 34px 16px 34px;
+  text-align: center;
+}
+
+/* topo simples */
+.hero{ margin-bottom: 10px; }
+.hero-title{
+  margin: 0;
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+.hero-sub{
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* label “ACESSO RÁPIDO” */
+.section-label{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap: 8px;
+  margin: 18px 0 12px;
+  font-size: 11px;
+  letter-spacing: .10em;
+  color: #94a3b8;
+  font-weight: 800;
+}
+.section-label .dots{ opacity: .7; }
+
+/* lista */
+.links-list{
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ✅ CARD INTEIRO CLICÁVEL */
+.link-card{
+  width: 100%;
+  max-width: 520px;
+
+  display: block;
+  text-align: left;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+
+  box-shadow: var(--shadow);
+  text-decoration: none;
+
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.link-card:hover{
+  transform: translateY(-1px);
+  border-color: #d3d9e4;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, .10);
+}
+
+/* ✅ foco no nome */
+.link-title{
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0b1220;
+  letter-spacing: -0.01em;
+}
+
+/* ✅ url pequena embaixo */
+.link-url{
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+/* opcional: setinha discreta no canto */
+.link-card::after{
+  content: "↗";
+  float: right;
+  margin-top: -22px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* mensagens / rodapé */
+.msg{
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footer{
+  margin-top: 18px;
+  font-size: 12px;
+  color: #9aa4b2;
+}
+
+@media (max-width: 520px){
+  .hero-title{ font-size: 34px; }
+  .link-card{ padding: 13px 14px; }
+  .link-title{ font-size: 15px; }
+}

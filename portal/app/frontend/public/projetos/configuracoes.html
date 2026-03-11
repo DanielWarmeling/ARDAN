@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Configurações - Projetos</title>
+
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <link rel="stylesheet" href="css/configuracoes.css" />
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="ph-fill ph-squares-four"></i>
+        </div>
+        <div class="brand-info">
+          <span class="brand-name">Portal</span>
+          <span class="brand-desc">Workspace</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-group">
+          <span class="nav-label">Menu</span>
+          <a class="nav-item" href="/projetos/projetos.html">
+            <i class="ph ph-folder-open"></i>
+            <span>Projetos</span>
+          </a>
+          <a class="nav-item active" href="/projetos/configuracoes.html" data-projetos-admin="1">
+            <i class="ph ph-gear"></i>
+            <span>Configurações</span>
+          </a>
+        </div>
+
+        <div class="nav-group" style="margin-top: 1rem;">
+          <span class="nav-label">Atalhos</span>
+          <a class="nav-item" href="/home.html">
+            <i class="ph ph-house"></i>
+            <span>Home</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="sidebarAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebarUserName">Usuário</span>
+            <span class="user-role" id="sidebarUserRole">-</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1>Configurações</h1>
+          <div class="muted">Gerencie setores, modelos e regras</div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn ghost" id="btnReload">
+            <i class="ph ph-arrows-clockwise"></i> Recarregar
+          </button>
+          <button class="btn ghost" id="btnVoltar">
+            <i class="ph ph-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </header>
+
+      <section class="content">
+        <!-- Setores -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Setores</div>
+              <div class="panel-sub">Cadastre setores e defina membros e aprovadores.</div>
+            </div>
+            <button id="btnNovoSetor" class="btn primary"><i class="ph ph-plus"></i> Novo setor</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Status</th>
+                  <th>Membros / Aprovadores</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodySetores"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Modelos -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Modelos de Projeto</div>
+              <div class="panel-sub">Templates versionados com colunas, campos e regras.</div>
+            </div>
+            <button id="btnNovoModelo" class="btn primary"><i class="ph ph-plus"></i> Novo modelo</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyModelos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Modelos de Tarefa -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Modelos de Tarefa</div>
+              <div class="panel-sub">Padrões de tarefas com campos dinâmicos e SLA.</div>
+            </div>
+            <button id="btnNovoModeloTarefa" class="btn primary"><i class="ph ph-plus"></i> Novo modelo de tarefa</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyModelosTarefa"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Setor -->
+  <div id="modalSetor" class="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title" id="modalSetorTitle">Novo setor</div>
+        <button id="closeSetor" class="icon-btn"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Nome</label>
+          <input id="setorNome" />
+        </div>
+        <div class="field">
+          <label>Descrição</label>
+          <input id="setorDesc" />
+        </div>
+        <div class="field">
+          <label>Membros</label>
+          <div class="selector" id="selSetorMembros">
+            <input class="selector-search" placeholder="Buscar usuário..." />
+            <div class="selector-body">
+              <div class="selector-col">
+                <div class="selector-title">Disponíveis</div>
+                <div class="selector-list" data-role="available"></div>
+              </div>
+              <div class="selector-col">
+                <div class="selector-title">Selecionados</div>
+                <div class="selector-chips" data-role="selected"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Aprovadores do setor</label>
+          <div class="selector" id="selSetorAprovadores">
+            <input class="selector-search" placeholder="Buscar usuário..." />
+            <div class="selector-body">
+              <div class="selector-col">
+                <div class="selector-title">Disponíveis</div>
+                <div class="selector-list" data-role="available"></div>
+              </div>
+              <div class="selector-col">
+                <div class="selector-title">Selecionados</div>
+                <div class="selector-chips" data-role="selected"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <label class="chk">
+          <input type="checkbox" id="setorAtivo" checked />
+          <span>Ativo</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="cancelSetor" class="btn ghost">Cancelar</button>
+        <button id="saveSetor" class="btn primary">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Modelo -->
+  <div id="modalModelo" class="modal">
+    <div class="modal-box" style="width: min(900px, 95vw);">
+      <div class="modal-head">
+        <div class="modal-title" id="modalModeloTitle">Novo modelo</div>
+        <button id="closeModelo" class="icon-btn"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="grid2">
+          <div class="field">
+            <label>Nome</label>
+            <input id="modeloNome" />
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="modeloAtivo">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Descrição</label>
+          <input id="modeloDesc" />
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>Prioridade inicial</label>
+            <select id="modeloPrioridade">
+              <option value="BAIXA">Baixa</option>
+              <option value="MEDIA" selected>Média</option>
+              <option value="ALTA">Alta</option>
+              <option value="URGENTE">Urgente</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Exigir nome do projeto</label>
+            <select id="modeloExigeNome">
+              <option value="true" selected>Sim</option>
+              <option value="false">Não</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Exigir prazo final</label>
+          <select id="modeloExigePrazo">
+            <option value="false" selected>Não</option>
+            <option value="true">Sim</option>
+          </select>
+        </div>
+
+        <div class="panel-title" style="margin-top: 1rem;">Etapas do fluxo</div>
+        <div id="etapasList" class="list-rows"></div>
+        <button id="addEtapa" class="btn secondary btn-sm"><i class="ph ph-plus"></i> Adicionar etapa</button>
+
+        <div class="panel-title" style="margin-top: 1rem;">Setores permitidos</div>
+        <div class="selector" id="selModeloSetores">
+          <input class="selector-search" placeholder="Buscar setor..." />
+          <div class="selector-body">
+            <div class="selector-col">
+              <div class="selector-title">Disponíveis</div>
+              <div class="selector-list" data-role="available"></div>
+            </div>
+            <div class="selector-col">
+              <div class="selector-title">Selecionados</div>
+              <div class="selector-chips" data-role="selected"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-title" style="margin-top: 1rem;">Campos do projeto</div>
+        <div id="camposProjetoList" class="list-rows"></div>
+        <button id="addCampoProjeto" class="btn secondary btn-sm"><i class="ph ph-plus"></i> Adicionar campo</button>
+
+        <div class="panel-title" style="margin-top: 1rem;">Campos da tarefa (1ª tarefa)</div>
+        <div id="camposTarefaList" class="list-rows"></div>
+        <button id="addCampoTarefa" class="btn secondary btn-sm"><i class="ph ph-plus"></i> Adicionar campo</button>
+
+        <div class="panel-title" style="margin-top: 1rem;">Regras de aprovação</div>
+        
+        <div class="aprov-block">
+          <h4>Projeto</h4>
+          <label class="chk"><input type="checkbox" id="aprovProjObrig" /> <span>Exige aprovação</span></label>
+          <div class="grid2" style="margin-top: 0.5rem;">
+            <div class="field">
+              <label>Usuários aprovadores</label>
+              <div class="selector" id="selAprovProjUsers">
+                <input class="selector-search" placeholder="Buscar usuário..." />
+                <div class="selector-body">
+                  <div class="selector-col">
+                    <div class="selector-list" data-role="available"></div>
+                  </div>
+                  <div class="selector-col">
+                    <div class="selector-chips" data-role="selected"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Setores aprovadores</label>
+              <div class="selector" id="selAprovProjSetores">
+                <input class="selector-search" placeholder="Buscar setor..." />
+                <div class="selector-body">
+                  <div class="selector-col">
+                    <div class="selector-list" data-role="available"></div>
+                  </div>
+                  <div class="selector-col">
+                    <div class="selector-chips" data-role="selected"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="aprov-block">
+          <h4>Tarefa</h4>
+          <label class="chk"><input type="checkbox" id="aprovTarefaObrig" /> <span>Exige aprovação</span></label>
+          <div class="grid2" style="margin-top: 0.5rem;">
+            <div class="field">
+              <label>Usuários aprovadores</label>
+              <div class="selector" id="selAprovTarefaUsers">
+                <input class="selector-search" placeholder="Buscar usuário..." />
+                <div class="selector-body">
+                  <div class="selector-col">
+                    <div class="selector-list" data-role="available"></div>
+                  </div>
+                  <div class="selector-col">
+                    <div class="selector-chips" data-role="selected"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Setores aprovadores</label>
+              <div class="selector" id="selAprovTarefaSetores">
+                <input class="selector-search" placeholder="Buscar setor..." />
+                <div class="selector-body">
+                  <div class="selector-col">
+                    <div class="selector-list" data-role="available"></div>
+                  </div>
+                  <div class="selector-col">
+                    <div class="selector-chips" data-role="selected"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Gasto/Compra blocks similarly if needed, keeping it concise for now -->
+
+      </div>
+      <div class="modal-actions">
+        <button id="cancelModelo" class="btn ghost">Cancelar</button>
+        <button id="saveModelo" class="btn primary">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Modelo Tarefa -->
+  <div id="modalModeloTarefa" class="modal">
+    <div class="modal-box" style="width: min(800px, 95vw);">
+      <div class="modal-head">
+        <div class="modal-title" id="modalModeloTarefaTitle">Novo modelo de tarefa</div>
+        <button id="closeModeloTarefa" class="icon-btn"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="grid2">
+          <div class="field">
+            <label>Nome</label>
+            <input id="tarefaModeloNome" />
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="tarefaModeloAtivo">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Setor</label>
+          <select id="tarefaModeloSetor"></select>
+        </div>
+        <div class="field">
+          <label>Descrição</label>
+          <input id="tarefaModeloDesc" />
+        </div>
+
+        <div class="panel-title" style="margin-top: 1rem;">Campos da tarefa</div>
+        <div id="tarefaCamposList" class="list-rows"></div>
+        <button id="addTarefaCampo" class="btn secondary btn-sm"><i class="ph ph-plus"></i> Adicionar campo</button>
+
+        <div class="panel-title" style="margin-top: 1rem;">SLA (dias)</div>
+        <div class="grid2" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="field"><label>Baixa</label><input id="tarefaSlaBaixa" type="number" min="0" /></div>
+          <div class="field"><label>Média</label><input id="tarefaSlaMedia" type="number" min="0" /></div>
+          <div class="field"><label>Urgente</label><input id="tarefaSlaUrgente" type="number" min="0" /></div>
+        </div>
+
+        <div class="panel-title" style="margin-top: 1rem;">Regras</div>
+        <label class="chk"><input type="checkbox" id="tarefaRequerAprov" /> <span>Requer aprovação</span></label>
+        <label class="chk"><input type="checkbox" id="tarefaRequerUpload" /> <span>Upload obrigatório</span></label>
+      </div>
+      <div class="modal-actions">
+        <button id="cancelModeloTarefa" class="btn ghost">Cancelar</button>
+        <button id="saveModeloTarefa" class="btn primary">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="js/configuracoes.js"></script>
+</body>
+</html>

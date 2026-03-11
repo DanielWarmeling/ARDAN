@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalhes do Contrato - Portal IBMF</title>
+  <link rel="stylesheet" href="css/contrato_detalhe.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header-top">
+      <div>
+        <h1>Detalhes do contrato</h1>
+        <p class="subtitulo">
+          Veja as informações do contrato, os documentos vinculados e anexe novos aditivos, distratos e certidões.
+        </p>
+      </div>
+      <div class="header-acoes">
+        <button id="btn-voltar" class="btn-light" type="button">Voltar</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Card de informações do contrato -->
+      <div class="card">
+        <div class="card-titulo">Contrato</div>
+
+        <div id="contrato-info" class="selecionado">
+          Carregando informações do contrato...
+        </div>
+
+        <div class="grupo-obs">
+          <label class="label" for="obs-contrato">Observações do contrato</label>
+          <!-- Apenas leitura -->
+          <textarea
+            id="obs-contrato"
+            class="input"
+            rows="4"
+            readonly
+          ></textarea>
+        </div>
+
+        <!-- Botões de download dentro do card -->
+        <div class="acoes acoes-contrato">
+          <button id="btn-download-portal" class="btn-primary" type="button">
+            Download contrato
+          </button>
+          <button id="btn-download-vault" class="btn-primary" type="button">
+            Download redundância
+          </button>
+        </div>
+      </div>
+
+      <!-- Card de vínculo de documentos (aditivos, distratos, certidões) -->
+      <div class="card">
+        <div class="card-titulo">Vincular documento</div>
+
+        <div class="upload-grid">
+          <div>
+            <label class="label" for="tipo-evento">Tipo de documento</label>
+            <select id="tipo-evento" class="input">
+              <option value="">Selecione</option>
+              <option value="ADITIVO">Aditivo</option>
+              <option value="DESTRATO">Distrato</option>
+              <option value="CONTRATO_SOCIAL">Contrato Social</option>
+              <option value="CORE_PJ">Certidão do CORE - PJ</option>
+              <option value="JUNTA_COMERCIAL">Certidão Junta Comercial</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="arquivo-evento">Arquivo (PDF)</label>
+            <input
+              id="arquivo-evento"
+              type="file"
+              accept="application/pdf"
+              class="input"
+            />
+          </div>
+        </div>
+
+        <div class="grupo-obs">
+          <label class="label" for="obs-evento">Observações do documento</label>
+          <textarea
+            id="obs-evento"
+            class="input"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="acoes">
+          <button id="btn-salvar-evento" class="btn-primary" type="button">
+            Vincular
+          </button>
+        </div>
+
+        <div id="msg-evento" class="form-message hidden"></div>
+      </div>
+    </div>
+
+    <!-- Lista de documentos vinculados -->
+    <div class="card" style="margin-top: 18px;">
+      <div class="card-header-row">
+        <div class="card-titulo">Documentos vinculados</div>
+
+        <div class="filtros-eventos">
+          <div class="filtro-item">
+            <label class="label" for="filtro-arquivo-evento">Buscar por arquivo</label>
+            <input
+              id="filtro-arquivo-evento"
+              type="text"
+              class="input"
+              placeholder="Parte do nome do arquivo..."
+            />
+          </div>
+          <div class="filtro-item">
+            <label class="label" for="filtro-tipo-evento">Filtrar por tipo</label>
+            <select id="filtro-tipo-evento" class="input">
+              <option value="">Todos</option>
+              <option value="ADITIVO">Aditivo</option>
+              <option value="DESTRATO">Distrato</option>
+              <option value="CONTRATO_SOCIAL">Contrato Social</option>
+              <option value="CORE_PJ">Certidão do CORE - PJ</option>
+              <option value="JUNTA_COMERCIAL">Certidão Junta Comercial</option>
+            </select>
+          </div>
+          <div class="filtro-item filtro-botao">
+            <button id="btn-limpar-filtros-evento" class="btn-light" type="button">
+              Limpar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabela-wrapper">
+        <table id="tabela-eventos">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tipo</th>
+              <th>Arquivo</th>
+              <th>Observações</th>
+              <th>Criado em</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-eventos"></tbody>
+        </table>
+      </div>
+      <div id="eventos-vazio" class="lista-vazia hidden">
+        Nenhum documento vinculado a este contrato.
+      </div>
+    </div>
+
+    <!-- CARD: Cidades vinculadas ao contrato -->
+    <div class="card" style="margin-top: 18px;">
+      <div class="card-header-row">
+        <div class="card-titulo">Cidades vinculadas ao contrato</div>
+        <button id="btn-gerenciar-cidades" class="btn-light" type="button">
+          Gerenciar cidades
+        </button>
+      </div>
+
+      <!-- Área que abre/fecha ao clicar no botão -->
+      <div id="card-cidades" class="cidades-area hidden">
+        <p class="subtitulo" style="margin-bottom:8px;">
+          Selecione as cidades que fazem parte deste contrato para vincular o representante ao território de atuação.
+        </p>
+
+        <div class="cidades-controles">
+          <!-- Coluna esquerda: busca/autocomplete -->
+          <div class="cidades-busca">
+            <label class="label" for="busca-cidade">Adicionar cidade</label>
+            <input
+              id="busca-cidade"
+              type="text"
+              class="input"
+              placeholder="Digite o nome da cidade ou IBGE..."
+            />
+            <div id="sugestoes-cidade" class="suggest-box hidden"></div>
+            <div class="muted" style="margin-top:4px;">
+              Digite pelo menos 2 caracteres para buscar na base de cidades (DWH).
+            </div>
+          </div>
+
+          <!-- Coluna direita: cidade selecionada + botão -->
+          <div class="cidades-selecionada-bloco">
+            <label class="label">Cidade selecionada</label>
+            <div id="cidade-selecionada-info" class="selecionado">
+              <span class="muted">Nenhuma cidade selecionada.</span>
+            </div>
+
+            <div class="acoes" style="margin-top:10px;">
+              <button id="btn-adicionar-cidade" class="btn-primary" type="button">
+                Vincular cidade
+              </button>
+            </div>
+
+            <div id="msg-cidade" class="form-message hidden"></div>
+          </div>
+        </div>
+
+        <!-- Tabela de cidades já vinculadas -->
+        <div class="tabela-wrapper" style="margin-top: 14px;">
+          <table id="tabela-cidades">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Cidade</th>
+                <th>Criado em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-cidades"></tbody>
+          </table>
+        </div>
+
+        <div id="cidades-vazio" class="lista-vazia">
+          Nenhuma cidade vinculada a este contrato.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Padrão do portal -->
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="js/contrato_detalhe.js"></script>
+</body>
+</html>

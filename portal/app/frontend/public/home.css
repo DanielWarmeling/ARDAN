@@ -1,0 +1,154 @@
+/* home.css - Portal IBMF (dashboard da imagem) */
+
+/* --------- Base --------- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f3f4f6; /* cinza claro */
+  color: #111827;
+}
+
+/* --------- Topbar --------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 32px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+}
+
+.topbar-logo {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+#user-name {
+  font-weight: 500;
+}
+
+.btn-sair {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background-color: #e5e7eb;
+  color: #111827;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.btn-sair:hover {
+  background-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+/* --------- Layout principal --------- */
+
+.page {
+  max-width: 1200px;
+  margin: 24px auto 32px;
+  padding: 0 24px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+/* --------- Cards --------- */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Card base */
+
+.card.home-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.card.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+/* Ícone do card */
+
+.card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon .icon {
+  font-size: 22px;
+  color: #ffffff;
+}
+
+/* Texto do card */
+
+.card-text h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.card-text p {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* --------- Responsivo --------- */
+
+@media (max-width: 768px) {
+  .topbar {
+    padding: 10px 16px;
+  }
+
+  .page {
+    padding: 0 16px;
+    margin-top: 18px;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

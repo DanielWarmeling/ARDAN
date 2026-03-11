@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Links - Administração</title>
+
+  <link rel="stylesheet" href="css/links_admin.css" />
+</head>
+<body>
+  <div class="container">
+
+    <div class="header-top">
+      <div>
+        <h1>Gerenciar Links</h1>
+        <p class="subtitulo">Cada link pertence a uma marca (Metasul / Arquitech / IBMF).</p>
+      </div>
+
+      <div class="header-acoes">
+        <button id="btn-voltar" class="btn-cancelar">Voltar</button>
+        <button id="btn-sair" class="btn-danger">Sair</button>
+      </div>
+    </div>
+
+    <!-- ✅ Botões para abrir páginas públicas por marca -->
+    <div class="card card-slim">
+      <div class="brand-actions">
+        <button id="btn-open-metasul" class="btn-ghost">Abrir Links Metasul</button>
+        <button id="btn-open-arquitech" class="btn-ghost">Abrir Links Arquitech</button>
+        <button id="btn-open-ibmf" class="btn-ghost">Abrir Links IBMF</button>
+      </div>
+    </div>
+
+    <!-- Cadastro -->
+    <div class="card">
+      <h2 class="card-titulo">Novo link</h2>
+
+      <div class="grid-3">
+        <div class="form-group">
+          <label for="marca" class="label">Marca *</label>
+          <select id="marca" class="input">
+            <option value="metasul">Metasul</option>
+            <option value="arquitech">Arquitech</option>
+            <option value="ibmf" selected>IBMF</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ordem" class="label">Ordem</label>
+          <input id="ordem" type="number" class="input" value="0" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label for="ativo" class="label">Ativo</label>
+          <select id="ativo" class="input">
+            <option value="true" selected>Sim</option>
+            <option value="false">Não</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="titulo" class="label">Nome do link *</label>
+          <input id="titulo" type="text" class="input" placeholder="Ex: Site Metasul" />
+        </div>
+
+        <div class="form-group">
+          <label for="url" class="label">Endereço (URL) *</label>
+          <input id="url" type="text" class="input" placeholder="https://..." />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="descricao" class="label">Descrição (opcional)</label>
+        <input id="descricao" type="text" class="input" placeholder="Ex: Acesso ao site oficial" />
+      </div>
+
+      <div class="form-group">
+        <label for="categoria" class="label">Categoria (opcional)</label>
+        <input id="categoria" type="text" class="input" placeholder="Ex: Site" />
+      </div>
+
+      <div class="acoes">
+        <button id="btn-criar" class="btn-primary">Cadastrar</button>
+        <button id="btn-recarregar" class="btn-cancelar">Recarregar</button>
+        <span id="msg" class="form-hint"></span>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-titulo">Links cadastrados</h2>
+      </div>
+
+      <div id="lista" class="lista"></div>
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="js/links_admin.js"></script>
+</body>
+</html>

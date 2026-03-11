@@ -1,0 +1,300 @@
+/* =========================================================
+   Paleta e tokens
+   ========================================================= */
+:root{
+  --bg:#f6f8fb;
+  --card:#fff;
+  --text:#1f2430;
+  --muted:#6b7280;
+  --brand:#2f6dfc;
+  --line:#e9edf5;
+  --shadow:0 8px 32px rgba(16,24,40,.08);
+  --radius:12px;
+
+  /* Arquitech (claro/forte) */
+  --arquitech-300:#fff3e2;  /* fundo claro */
+  --arquitech-500:#F4B541;  /* borda/acentos */
+
+  /* Metasul (claro/forte) */
+  --metasul-300:#ecf4ff;    /* fundo claro */
+  --metasul-600:#104587;    /* borda/acentos */
+
+  /* DOTs (lista + detalhe) */
+  --dot-arquitech: var(--arquitech-500);
+  --dot-metasul:   var(--metasul-600);
+
+  /* Pill */
+  --pill-bg:#f6f8fb;
+  --pill-bd:#f6f8fb;
+
+  /* Acento da TOPBAR (faixa inferior) — padrão = brand */
+  --topbar-accent: var(--brand);
+}
+
+/* =========================================================
+   Reset + tipografia (Montserrat)
+   ========================================================= */
+*{box-sizing:border-box}
+html,body{
+  margin:0; padding:0; background:var(--bg); color:var(--text);
+  font-family: Montserrat, Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* =========================================================
+   TOPBAR (com faixa de acento controlada por --topbar-accent)
+   ========================================================= */
+.topbar{
+  position:sticky; top:0; z-index:10;
+  display:flex; align-items:center; gap:16px;
+  padding:12px 20px; background:var(--card); border-bottom:1px solid var(--line);
+  overflow:visible;
+}
+.topbar::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px;
+  height:3px; background: var(--topbar-accent);
+  border-bottom-left-radius: 2px; border-bottom-right-radius: 2px;
+}
+
+.btn-back{
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+  background:#fff; color:#111827; border:1px solid var(--line);
+  border-radius:10px; padding:8px 12px; font-weight:600; line-height:1;
+  box-shadow:0 2px 0 rgba(0,0,0,.04);
+  transition:transform .12s ease, box-shadow .12s ease
+}
+.btn-back:hover{ transform:translateY(-1px); box-shadow:0 6px 12px rgba(17,24,39,.08) }
+.topbar .brand{ margin-left:auto; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none }
+.topbar .brand-img{ height:34px; width:auto }
+.topbar .cta-right{display:flex; gap:8px}
+
+/* =========================================================
+   Container
+   ========================================================= */
+.container{max-width:1040px; margin:28px auto; padding:0 20px}
+
+/* =========================================================
+   Cards
+   ========================================================= */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{display:grid; grid-template-columns:1.2fr .8fr; gap:20px; margin-bottom:20px}
+
+/* Card ESQUERDO (Título + lead) com variações */
+.hero-left{padding:18px}
+
+/* Base "soft" + variações single */
+.soft{
+  border:1px solid transparent;
+  background:
+    linear-gradient(180deg, var(--arquitech-300), var(--arquitech-300)) padding-box,
+    linear-gradient(180deg, var(--arquitech-500), var(--arquitech-500)) border-box;
+  background-clip: padding-box, border-box;
+}
+.soft--arquitech{
+  border:1px solid transparent;
+  background:
+    linear-gradient(180deg, var(--arquitech-300), var(--arquitech-300)) padding-box,
+    linear-gradient(180deg, var(--arquitech-500), var(--arquitech-500)) border-box;
+  background-clip: padding-box, border-box;
+}
+.soft--metasul{
+  border:1px solid transparent;
+  background:
+    linear-gradient(180deg, var(--metasul-300), var(--metasul-300)) padding-box,
+    linear-gradient(180deg, var(--metasul-600), var(--metasul-600)) border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* MIX: fundo claro em degradê + borda em degradê forte */
+.soft--mix{
+  border:1px solid transparent;
+  background:
+    linear-gradient(135deg, var(--arquitech-300), var(--metasul-300)) padding-box,
+    linear-gradient(135deg, var(--arquitech-500), var(--metasul-600)) border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* Pill + textos do título */
+.pill{
+  display:inline-block; font-size:12px; padding:6px 10px;
+  border-radius:999px; background:var(--pill-bg); border:1px solid var(--pill-bd)
+}
+.vaga-titulo{margin:10px 0 6px; font-size:28px}
+.vaga-lead{margin:0; color:var(--muted)}
+
+/* =========================================================
+   Card DIREITO (informações) — sem degradê (igual aos outros)
+   ========================================================= */
+.hero-right{padding:16px}
+/* Garantir fundo liso se existir a classe banner-marca no HTML */
+.banner-marca{ background: var(--card) !important; }
+
+/* Linha (badge) */
+.linha-badge{display:flex; align-items:center; gap:10px; font-weight:700; margin-bottom:12px}
+.dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+.dot.arquitech{ background: var(--dot-arquitech) }
+.dot.metasul{   background: var(--dot-metasul)   }
+
+/* dot DUAS BOLINHAS quando mix */
+.dot.dual{ position:relative; width:22px; height:12px; background:transparent; border-radius:0 }
+.dot.dual::before, .dot.dual::after{
+  content:""; position:absolute; top:0; width:10px; height:10px; border-radius:50%
+}
+.dot.dual::before{ left:0;  background: var(--dot-arquitech) }
+.dot.dual::after{  right:0; background: var(--dot-metasul) }
+
+.linha{letter-spacing:.3px; text-transform:uppercase}
+
+/* Mini-cards 2x2 */
+.info-cards{ display:grid; grid-template-columns: repeat(2, 1fr); gap:10px }
+.mini-card{
+  display:flex; align-items:center; gap:10px;
+  background:#f7f9ff; border:1px solid #e8eaf2; border-radius:12px;
+  padding:10px 12px; min-height:44px;
+}
+.mini-icon{font-size:16px}
+.mini-text{display:flex; flex-direction:column; line-height:1.1}
+.mini-label{font-size:11px; color:#51607a; font-weight:600}
+.mini-value{font-size:13.5px; color:#243b66; font-weight:700}
+
+/* Datas */
+.dates{margin-top:12px; display:flex; gap:18px; color:#34435f; font-size:13px}
+.hide{display:none !important}
+
+/* =========================================================
+   Blocos
+   ========================================================= */
+.block{padding:18px; margin-bottom:18px}
+.block h2{font-size:16.5px; margin:0 0 12px}
+.text{color:#374151; line-height:1.55}
+.list{margin:0; padding-left:18px; color:#374151}
+.list li{margin:6px 0}
+.list.num{list-style:decimal}
+
+/* Links institucionais */
+.links{display:flex; flex-wrap:wrap; gap:12px; margin-top:12px}
+.link{ text-decoration:none; background:#eef3ff; border:1px solid #d6e1ff; color:#2043a1;
+  padding:8px 12px; border-radius:10px; font-size:13px }
+
+/* =========================================================
+   CTAs
+   ========================================================= */
+.cta-bottom{display:flex; gap:10px; justify-content:flex-end; margin:28px 0}
+.btn{ border:1px solid #dbe3f1; background:#fff; color:#233a66;
+  padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600 }
+.btn.primary{background:var(--brand); color:#fff; border-color:transparent}
+.btn.ghost{background:#fff}
+.btn.sm{padding:8px 12px; font-size:13px}
+
+/* =========================================================
+   Responsivo
+   ========================================================= */
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr; gap:14px}
+  .cta-bottom{justify-content:stretch}
+}
+
+/* ====== Topbar mobile: 4 itens do mesmo tamanho ====== */
+@media (max-width: 640px) {
+  .topbar{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 8px;
+    height: auto;
+  }
+  .topbar .cta-right{ display: contents; }
+
+  .topbar .btn,
+  .topbar .btn-back,
+  .topbar .brand{
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .topbar .brand{
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0;
+  }
+  .topbar .brand .brand-img{
+    height: 40px;
+    width: auto;
+  }
+
+  .topbar .btn.sm,
+  .topbar .btn-back{ height: 44px; padding: 0 8px; }
+
+  .topbar .btn-back .icon{ margin-right: 6px; }
+}
+
+/* =========================================================
+   MODAL — “Como deseja candidatar-se?”
+   ========================================================= */
+.cand-modal{position:fixed;inset:0;display:none;z-index:9999}
+.cand-modal[aria-hidden="false"]{display:block}
+.cand-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(2px)}
+.cand-dialog{
+  position:relative;max-width:880px;margin:48px auto;background:#fff;border-radius:14px;
+  box-shadow:0 18px 48px rgba(16,24,40,.18);padding:24px 28px 22px;overflow:hidden
+}
+.cand-close{
+  position:absolute;top:10px;right:12px;border:0;background:transparent;font-size:22px;
+  line-height:1;cursor:pointer;color:#1f2430;opacity:.7
+}
+.cand-header{padding:6px 6px 10px}
+.cand-breadcrumb{display:inline-block;font-size:14px;color:#104587;margin-bottom:6px}
+.cand-title{margin:0 0 4px;font-size:26px;color:#1f2430}
+.cand-sub{margin:0;color:#6b7280}
+
+/* Cards do modal */
+.cand-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0 8px}
+.cand-card{
+  background:#fff;border:1px solid #e9edf5;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,.08);
+  cursor:pointer;outline:0;transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease
+}
+.cand-card:focus,.cand-card:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(16,24,40,.12);border-color:#dfe6f2}
+.cand-card-top{display:flex;align-items:center;gap:10px;padding:14px 16px 0}
+.cand-pill{width:64px;height:6px;border-radius:20px;background:#e9edf5}
+.pill-arquitech{background:#F4B541}
+.pill-metasul{background:#104587}
+.cand-progress{
+  height:6px;border-radius:20px;flex:1;background:linear-gradient(90deg,#104587 0%,#104587 60%,transparent 60%)
+}
+.cand-card-body{padding:14px 16px 18px}
+.cand-ico{width:44px;height:44px;border-radius:10px;background:#f6f8fb;display:flex;align-items:center;justify-content:center;margin-bottom:8px;color:#104587}
+.cand-card-title{margin:0 0 4px;font-size:18px;color:#1f2430}
+.cand-card-desc{margin:0 0 12px;color:#6b7280}
+.cand-btn{
+  border:0;border-radius:10px;padding:10px 14px;background:#2f6dfc;color:#fff;font-weight:600;cursor:pointer
+}
+.cand-footnote{margin:8px 6px 0;color:#6b7280}
+
+/* Responsivo do modal */
+@media (max-width: 780px){
+  .cand-dialog{margin:24px 12px}
+  .cand-cards{grid-template-columns:1fr}
+}
+
+/* =========================================================
+   VARIAÇÕES DE COR DA TOPBAR POR MARCA (via body[data-brand])
+   ========================================================= */
+body[data-brand="arquitech"] .topbar{ --topbar-accent: var(--arquitech-500); }
+body[data-brand="metasul"]   .topbar{ --topbar-accent: var(--metasul-600); }
+body[data-brand="mix"]       .topbar::after{
+  background: linear-gradient(90deg, var(--arquitech-500), var(--metasul-600));
+}

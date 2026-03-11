@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contratos - Portal IBMF</title>
+  <link rel="stylesheet" href="css/contratos.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header-top">
+      <div>
+        <h1>Contratos</h1>
+        <p class="subtitulo">
+          Faça o upload dos contratos assinados e consulte o histórico.
+        </p>
+      </div>
+      <div class="header-acoes">
+        <button id="btn-voltar" class="btn-light" type="button">← Voltar ao painel</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Card da seleção/upload -->
+      <div class="card">
+        <h2 class="card-titulo">1) Selecionar pessoa e enviar contrato</h2>
+
+        <label for="busca-rep" class="label">Buscar Pessoa (Razão Social ou código)</label>
+        <input id="busca-rep" type="text" class="input" placeholder="Digite ao menos 3 caracteres" autocomplete="off" />
+        <div id="sugestoes-rep" class="suggest-box hidden"></div>
+
+        <div class="selecionado" id="rep-selecionado">
+          <span class="muted">Nenhuma pessoa selecionada.</span>
+        </div>
+
+        <div class="grid-regiao">
+          <div>
+            <label for="regiao-opcoes" class="label">Linha / Região vinculada</label>
+            <select id="regiao-opcoes" class="input" disabled>
+              <option value="">Selecione uma pessoa </option>
+            </select>
+            <small class="muted" id="msg-regiao">Selecione uma pessoa para carregar as opções disponíveis.</small>
+          </div>
+        </div>
+
+        <div class="upload-grid">
+          <div>
+            <label for="arquivo-contrato" class="label">Arquivo do contrato (PDF assinado)</label>
+            <input id="arquivo-contrato" type="file" class="input" accept="application/pdf" />
+            <small class="muted">O arquivo é salvo no DWH e no cofre externo sem alterações.</small>
+          </div>
+          <div>
+            <label for="observacoes" class="label">Observações (opcional)</label>
+            <textarea id="observacoes" class="input" rows="3" maxlength="2000" placeholder="Observações internas"></textarea>
+            <small class="muted">Máx. 2000 caracteres.</small>
+          </div>
+        </div>
+
+        <div class="acoes">
+          <button id="btn-upload" class="btn-primary" type="button">Enviar contrato</button>
+          <button id="btn-limpar-rep" class="btn-light" type="button">Limpar seleção</button>
+        </div>
+        <div id="msg-upload" class="form-message hidden"></div>
+      </div>
+
+      <!-- Card da listagem -->
+      <div class="card">
+        <h2 class="card-titulo">2) Contratos cadastrados</h2>
+
+        <div class="filtros">
+          <div class="col">
+            <label class="label">Busca (Pessoa, arquivo ou hash)</label>
+            <input id="f-busca" type="text" class="input" placeholder="Ex.: Nome da Pessoa" />
+          </div>
+          <div class="col col-sm">
+            <label class="label">Código Pessoa</label>
+            <input id="f-rep" type="text" class="input" placeholder="Somente números" />
+          </div>
+          <div class="col col-acoes">
+            <button id="btn-filtrar" class="btn-primary" type="button">Filtrar</button>
+            <button id="btn-limpar" class="btn-light" type="button">Limpar</button>
+          </div>
+        </div>
+
+        <div class="tabela-wrapper">
+          <table id="tabela-contratos">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Pessoa</th>
+                <th>Arquivo</th>
+                <th>Linha / Região</th>
+                <th>Registrado em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-contratos"></tbody>
+          </table>
+          <div id="lista-vazia" class="lista-vazia hidden">Nenhum contrato encontrado para os filtros informados.</div>
+        </div>
+
+        <div class="paginacao">
+          <div id="pag-info" class="pag-info"></div>
+          <div class="pag-acoes">
+            <button id="pag-prev" class="btn-light" type="button">◀</button>
+            <button id="pag-next" class="btn-light" type="button">▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="js/contratos.js"></script>
+</body>
+</html>

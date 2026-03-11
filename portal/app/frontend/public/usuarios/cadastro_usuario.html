@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Novo Usuário - Portal IBMF</title>
+  <link rel="stylesheet" href="css/cadastro_usuario.css" />
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Cabeçalho -->
+    <div class="header-top">
+      <div>
+        <h1>Novo Usuário</h1>
+        <p class="subtitulo">Vincule um cadastro do DWH e defina permissões de acesso.</p>
+      </div>
+
+      <div class="header-acoes">
+        <button class="btn-secondary" type="button" onclick="window.location.href='../home.html'">Voltar ao painel</button>
+        <button class="btn-voltar" type="button" onclick="window.location.href='usuarios.html'">Voltar à lista</button>
+      </div>
+    </div>
+
+    <!-- Card 1: Selecionar do DWH -->
+    <div class="card">
+      <div class="card-top">
+        <h2 class="card-titulo">1) Selecionar cadastro no DWH</h2>
+        <div class="card-top-acoes">
+          <button id="btn-limpar-dwh" class="btn-secondary" type="button">Limpar seleção</button>
+        </div>
+      </div>
+
+      <label for="buscar-dwh" class="label">Buscar por Razão Social (ods.cadastros_src)</label>
+      <input id="buscar-dwh" type="text" class="input" placeholder="Digite parte da razão social…" autocomplete="off"/>
+
+      <div id="sugestoes" class="suggest-box hidden"></div>
+
+      <div class="grid-dwh">
+        <div class="form-group">
+          <label class="label">Código (IDCLIFOREMPTENANT)</label>
+          <input id="dwh-codigo" type="text" class="input input-resultado" placeholder="— selecione no DWH —" readonly/>
+        </div>
+        <div class="form-group">
+          <label class="label">Nome / Razão Social</label>
+          <input id="nome" type="text" class="input input-resultado" placeholder="— selecione no DWH —" readonly/>
+        </div>
+        <div class="form-group">
+          <label class="label">E-mail</label>
+          <input id="email" type="email" class="input input-resultado" placeholder="— selecione no DWH —" readonly/>
+          <small class="muted">Se vier vazio do DWH, o campo será liberado para edição.</small>
+        </div>
+      </div>
+
+      <div id="msg-dwh" class="form-message hidden"></div>
+    </div>
+
+    <!-- Card 2: Perfil, Permissões e Credenciais -->
+    <div class="card">
+      <div class="card-top">
+        <h2 class="card-titulo">2) Perfil, permissões e credenciais</h2>
+
+        <div class="card-top-acoes">
+          <button id="btn-limpar-form" class="btn-secondary" type="button">Limpar formulário</button>
+        </div>
+      </div>
+
+      <!-- PERFIL -->
+      <div class="section">
+        <div class="section-head">
+          <h3 class="section-title">Perfil</h3>
+          <span class="chip" id="chip-admin">Usuário</span>
+        </div>
+
+        <div class="grid-perfil">
+          <div class="form-group">
+            <label for="linha" class="label">Linha</label>
+            <select id="linha" class="input">
+              <option value="todas" selected>todas</option>
+              <option value="arquitech">arquitech</option>
+              <option value="metasul">metasul</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="label">É admin?</label>
+            <div class="toggle-row">
+              <label class="switch">
+                <input id="isadmin" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-text" id="txt-isadmin">Não</span>
+            </div>
+            <small class="muted">Admins podem acessar a área de usuários.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERMISSÕES -->
+      <div class="section">
+        <div class="section-head">
+          <h3 class="section-title">Permissões de módulos</h3>
+          <div class="section-actions">
+            <span class="chip" id="chip-permissoes">0 ativas</span>
+            <button id="btn-marcar-todas" class="btn-secondary btn-mini" type="button">Marcar todas</button>
+            <button id="btn-desmarcar-todas" class="btn-secondary btn-mini" type="button">Limpar</button>
+          </div>
+        </div>
+
+        <div class="perm-grid" id="perm-grid">
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">RH (Vagas)</div>
+              <div class="perm-desc">Acessar e gerenciar vagas.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-rh" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">Contratos</div>
+              <div class="perm-desc">Acessar módulo de contratos.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-contratos" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">Comissões</div>
+              <div class="perm-desc">Acessar módulo de comissões.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-comissoes" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">Inadimplência</div>
+              <div class="perm-desc">Inadimplência e pagamentos.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-inadimplencia" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">SAC</div>
+              <div class="perm-desc">Acessar módulo de SAC.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-sac" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">Links</div>
+              <div class="perm-desc">Gerenciar links públicos.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-links" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- SIMULAÇÕES (com Aprovar dentro) -->
+          <div class="perm-item" id="perm-simulacoes">
+            <div class="perm-main">
+              <div class="perm-title">Simulações</div>
+              <div class="perm-desc">Simulação de preço.</div>
+
+              <div class="perm-sub hidden" id="wrap-aprovar">
+                <div class="toggle-row">
+                  <div>
+                    <div class="perm-title perm-sub-title">Aprovar simulação</div>
+                    <div class="perm-desc">Permite aprovar simulações.</div>
+                  </div>
+                  <label class="switch">
+                    <input id="aprovar" type="checkbox" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <small class="muted">Só fica disponível quando “Simulações” estiver ativo.</small>
+              </div>
+            </div>
+
+            <label class="switch">
+              <input id="acesso-simulacoes" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">Regiões</div>
+              <div class="perm-desc">Regiões e supervisores.</div>
+            </div>
+            <label class="switch">
+              <input id="acesso-regioes" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- METAS -->
+          <div class="perm-item" id="perm-metas">
+            <div class="perm-main">
+              <div class="perm-title">Metas</div>
+              <div class="perm-desc">Acessar módulo de metas (cascata).</div>
+
+              <div class="perm-sub hidden" id="wrap-metas">
+                <div class="toggle-row">
+                  <div>
+                    <div class="perm-title perm-sub-title">Admin Metas</div>
+                    <div class="perm-desc">Pode fechar/reabrir mês e editar tudo.</div>
+                  </div>
+                  <label class="switch">
+                    <input id="metas-admin" type="checkbox" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="perm-sub-row">
+                  <div class="perm-sub-col">
+                    <label class="perm-sub-label">Editar de</label>
+                    <select id="metas-from" class="perm-sub-select">
+                      <option value="1">IBMF (Root)</option>
+                      <option value="2" selected>Linha</option>
+                      <option value="3">Região</option>
+                      <option value="4">Grupo</option>
+                      <option value="5">Representante</option>
+                      <option value="6">Item</option>
+                    </select>
+                  </div>
+                  <div class="perm-sub-col">
+                    <label class="perm-sub-label">Até</label>
+                    <select id="metas-until" class="perm-sub-select">
+                      <option value="1">IBMF (Root)</option>
+                      <option value="2">Linha</option>
+                      <option value="3">Região</option>
+                      <option value="4">Grupo</option>
+                      <option value="5" selected>Representante</option>
+                      <option value="6">Item</option>
+                    </select>
+                  </div>
+                </div>
+                <small class="muted">Ordem: IBMF → Linha → Região → Grupo → Rep → Item.</small>
+              </div>
+            </div>
+            <label class="switch">
+              <input id="acesso-metas" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="perm-item">
+            <div class="perm-main">
+              <div class="perm-title">Projetos</div>
+              <div class="perm-desc">Acessar módulo de projetos.</div>
+              <div class="perm-sub hidden" id="wrap-projetos-admin">
+                <div class="toggle-row">
+                  <div>
+                    <div class="perm-title perm-sub-title">Admin Projetos</div>
+                    <div class="perm-desc">Acessa configurações e aprovações.</div>
+                  </div>
+                  <label class="switch">
+                    <input id="projetos-admin" type="checkbox" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <label class="switch">
+              <input id="acesso-projetos" type="checkbox" data-permissao="1" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- CREDENCIAIS -->
+      <div class="section">
+        <div class="section-head">
+          <h3 class="section-title">Credenciais</h3>
+        </div>
+
+        <div class="form-group">
+          <label for="username" class="label">Nome de usuário</label>
+          <input
+            id="username"
+            type="text"
+            class="input"
+            placeholder="ex.: daniel.w"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+          />
+          <small class="muted">Use letras/números e os símbolos . _ - (3–32 caracteres).</small>
+        </div>
+
+        <div class="grid-senha">
+          <div class="form-group">
+            <label for="senha" class="label">Senha</label>
+            <input type="password" id="senha" class="input" placeholder="Defina a senha" autocomplete="new-password" />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmar" class="label">Confirmar senha</label>
+            <input type="password" id="confirmar" class="input" placeholder="Confirme a senha" autocomplete="new-password" />
+          </div>
+
+          <div class="form-group senha-acoes">
+            <label class="label">Ações de senha</label>
+            <div class="senha-botoes">
+              <button id="btn-gerar-senha" class="btn-secondary" type="button">Gerar senha</button>
+              <button id="btn-toggle-senha" class="btn-secondary" type="button">Mostrar</button>
+            </div>
+            <small class="muted">Nada é preenchido automaticamente. Use “Gerar senha” se quiser criar uma senha forte.</small>
+          </div>
+        </div>
+
+        <div class="acoes">
+          <button id="btn-salvar" class="btn-primary" type="button">Cadastrar</button>
+          <button id="btn-cancelar" class="btn-cancelar" type="button" onclick="window.location.href='usuarios.html'">Cancelar</button>
+        </div>
+
+        <div id="msg-form" class="form-message hidden"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="js/cadastro_usuario.js"></script>
+</body>
+</html>

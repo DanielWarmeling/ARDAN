@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grupos de Usuários - Portal IBMF</title>
+  <link rel="stylesheet" href="css/grupo_usuarios.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Cabeçalho -->
+    <div class="header-top">
+      <div>
+        <h1>Grupos de Usuários</h1>
+        <p class="subtitulo">Gerencie grupos, status e membros vinculados aos usuários.</p>
+      </div>
+
+      <div class="header-acoes">
+        <button class="btn btn-light" type="button" onclick="window.location.href='usuarios.html'">← Voltar para Usuários</button>
+      </div>
+    </div>
+
+    <!-- Acesso negado -->
+    <div id="acesso-negado" class="card card-alert hidden">
+      Acesso negado. Esta página é restrita a administradores.
+    </div>
+
+    <!-- Novo grupo -->
+    <div class="card">
+      <div class="card-top">
+        <h2 class="card-titulo">Novo grupo</h2>
+        <span class="chip">Dica: use nomes curtos e claros</span>
+      </div>
+
+      <div class="row-grid">
+        <div class="col">
+          <label class="label" for="g-nome">Nome</label>
+          <input id="g-nome" type="text" class="input" placeholder="Ex.: Comercial Sul">
+        </div>
+
+        <div class="col">
+          <label class="label" for="g-desc">Descrição</label>
+          <input id="g-desc" type="text" class="input" placeholder="(opcional) Ex.: equipe de vendas da região sul">
+        </div>
+      </div>
+
+      <div class="acoes">
+        <button class="btn btn-primary" id="g-criar" type="button">Criar grupo</button>
+      </div>
+    </div>
+
+    <!-- Lista de grupos -->
+    <div class="card">
+      <div class="card-top">
+        <h2 class="card-titulo">Grupos</h2>
+
+        <div class="card-top-acoes">
+          <div class="search-wrap">
+            <input id="g-busca" type="text" class="input" placeholder="Buscar por nome do grupo">
+            <button class="btn btn-secondary" id="g-filtrar" type="button">Filtrar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabela-wrapper">
+        <table id="grupos-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th style="width:340px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="g-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Membros -->
+    <div class="card hidden" id="membros-card">
+      <div class="card-top">
+        <h2 class="card-titulo">
+          Membros do grupo: <span id="m-grupo-nome"></span>
+        </h2>
+
+        <div class="card-top-acoes">
+          <span class="chip chip-on">Gerencie membros sem sair da página</span>
+        </div>
+      </div>
+
+      <div class="membros-controles">
+        <div class="col-usuario">
+          <label class="label" for="m-usuarios">Adicionar usuário</label>
+          <select id="m-usuarios" class="input"></select>
+          <div class="muted">Mostrando: Nome • username • e-mail • <strong>cod. DWH</strong></div>
+        </div>
+
+        <div class="col-btn">
+          <button class="btn btn-primary" id="m-add" type="button">Adicionar</button>
+        </div>
+      </div>
+
+      <div class="tabela-wrapper mt-3">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuário</th>
+              <th>Username</th>
+              <th>E-mail</th>
+              <th>Código (DWH)</th>
+              <th>Perfil</th>
+              <th style="width:140px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="m-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Config / Auth globais -->
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+
+  <!-- Lógica específica -->
+  <script src="js/grupo_usuarios.js"></script>
+</body>
+</html>

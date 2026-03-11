@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-admin}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-nB9Qe7Lm4Vx2PortalDWH}"
+      POSTGRES_DB: "${POSTGRES_DB:-dwh_portal}"
+      TZ: America/Sao_Paulo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-dwh_portal}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  portal:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    environment:
+      DB_HOST: "${POSTGRES_HOST:-postgres}"
+      DB_PORT: "${POSTGRES_PORT:-5432}"
+      DB_USER: "${POSTGRES_USER:-admin}"
+      DB_PASSWORD: "${POSTGRES_PASSWORD:-nB9Qe7Lm4Vx2PortalDWH}"
+      DB_NAME: "${POSTGRES_DB:-dwh_portal}"
+
+      POSTGRES_HOST: "${POSTGRES_HOST:-postgres}"
+      POSTGRES_PORT: "${POSTGRES_PORT:-5432}"
+      POSTGRES_USER: "${POSTGRES_USER:-admin}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-nB9Qe7Lm4Vx2PortalDWH}"
+      POSTGRES_DB: "${POSTGRES_DB:-dwh_portal}"
+
+      BACKEND_PORT: "${BACKEND_PORT:-7071}"
+      PORT: "${BACKEND_PORT:-7071}"
+
+      KEYCLOAK_URL: "${KEYCLOAK_URL}"
+      KEYCLOAK_REALM: "${KEYCLOAK_REALM}"
+      KEYCLOAK_CLIENT_ID: "${KEYCLOAK_CLIENT_ID}"
+
+      CORS_ORIGIN: "${CORS_ORIGIN:-*}"
+      TZ: America/Sao_Paulo
+    ports:
+      - "${BACKEND_PORT:-7071}:${BACKEND_PORT:-7071}"
+
+volumes:
+  pgdata:

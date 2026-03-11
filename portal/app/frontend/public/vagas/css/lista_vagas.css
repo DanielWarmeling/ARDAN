@@ -1,0 +1,298 @@
+:root{
+  --bg:#f6f8fb;
+  --card:#ffffff;
+  --ink:#0f172a;
+  --muted:#6b7280;
+  --brand:#2563eb;
+  --chip:#eef2f7;
+  --chip-bd:#e6eaf1;
+  --shadow: 0 8px 32px rgba(16,24,40,.08);   /* igual ao detalhe */
+  --shadow-hover: 0 10px 28px rgba(16,24,40,.14);
+  --arquitech:#f4b541;  /* dot */
+  --metasul:#104587;    /* dot */
+  --radius:12px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol", sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+}
+
+/* topo */
+.topbar{
+  height:64px;
+  display:flex;
+  align-items:center;
+  padding:0 40px;
+}
+/* brand como imagem, sem contorno */
+.brand{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:0; border:0; background:transparent;
+}
+.brand-img{ display:block; height:34px; width:auto; }
+
+/* página */
+.page{
+  max-width:1080px;
+  margin:0 auto;
+  padding:6px 18px 48px;
+}
+
+/* busca */
+.search-wrap{margin-top:6px;margin-bottom:10px}
+.search{
+  display:flex;
+  gap:10px;
+  background:var(--card);
+  border-radius:16px;
+  padding:10px;
+  box-shadow:var(--shadow);
+  align-items:center;
+}
+.search input{
+  flex:1;
+  height:44px;
+  padding:0 14px;
+  border:none;
+  outline:none;
+  background:#f8fafc;
+  border-radius:12px;
+  font-size:16px;
+}
+.search button{
+  width:44px;height:44px;
+  border:none;outline:none;cursor:pointer;
+  border-radius:12px;
+  background:var(--brand);
+  color:#fff;
+  display:grid;place-items:center;
+}
+.hint{
+  margin:10px 10px 0 10px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+/* grid de vagas */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:20px;
+  margin-top:22px;
+}
+@media (min-width:980px){
+  .grid{ grid-template-columns: 1fr 1fr; }
+}
+
+/* card */
+.card{
+  background:var(--card);
+  border-radius:12px;             /* igual ao detalhe */
+  box-shadow: var(--shadow);
+  padding:22px;
+  position:relative;
+  transition: transform .12s ease, box-shadow .12s ease;
+  cursor:pointer;
+  border:none;                     /* sem borda */
+}
+.card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* linha (dot + nome) e título */
+.linha-badge{
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:10px; font-weight:700; letter-spacing:.4px;
+}
+.dot{ width:10px; height:10px; border-radius:50%; display:inline-block }
+.dot.arquitech{ background: var(--arquitech) }
+.dot.metasul{ background: var(--metasul) }
+.linha-badge .linha{ font-size:12px; color:#465168; text-transform:uppercase }
+
+.title{
+  font-weight:700;
+  font-size:20px;
+  margin:0 0 12px 0;
+  color:#0f172a;
+}
+
+/* ===== mini-cards 2x2 (EXATAMENTE 2 em cima + 2 embaixo) ===== */
+.info-cards{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr)); /* 2 colunas fixas */
+  gap:10px 12px;
+  margin:10px 0 12px 0;
+}
+.mini-card{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#f8fafc;             /* fundo claro */
+  border:1px solid #e6eaf1;       /* borda suave (pill) */
+}
+.mini-icon{
+  font-size:16px; line-height:1;
+  color:#6b7280;
+}
+.mini-text{ display:flex; flex-direction:column }
+.mini-label{ font-size:12px; color:#6b7280; font-weight:600 }
+.mini-value{
+  font-size:14px; font-weight:700; color:#193463; /* azul forte */
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* datas */
+.dates{ margin-top:8px; font-size:13px; color:#6b7280 }
+.dates strong{ color:#0f172a }
+
+/* ===== legado (compat) ===== */
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:10px;
+  margin-bottom:12px;
+}
+@media (min-width:720px){
+  .info-grid{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+}
+.info-box{
+  background:#f8fafc;
+  border:1px solid #e6eaf1;
+  border-radius:10px;
+  padding:10px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-height:58px;
+}
+.info-label{
+  display:flex; align-items:center; gap:8px;
+  font-size:.75rem; color:#64748b; font-weight:600;
+}
+.info-value{
+  font-size:.95rem; color:#0f172a; font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* chips antigos (compat) */
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:2px;
+}
+.chip{
+  background:var(--chip);
+  border:1px solid var(--chip-bd);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:13px;
+  color:#111827;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  user-select:none;
+}
+.chip.ghost{
+  background:#fff5f5;
+  border-color:#f2d6d7;
+  color:#a83a3a;
+}
+
+/* estados */
+.meta{ margin-top:6px; color:var(--muted); font-size:13px }
+.hidden{display:none}
+.empty, .error{
+  text-align:center;
+  margin:28px 0;
+  color:var(--muted);   /* corrigido */
+}
+
+/* skeleton */
+.skel{
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+.sbar, .sline{
+  background: linear-gradient(90deg, #f2f4f8 0%, #eaeef4 50%, #f2f4f8 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius:8px;
+}
+.sbar{height:14px;width:90px;margin-bottom:14px}
+.sline{height:18px;width:70%;margin:10px 0}
+@keyframes shimmer{
+  0%{background-position: 200% 0}
+  100%{background-position: -200% 0}
+}
+
+/* ============ ADIÇÕES PARA "DUAS MARCAS" (ARQUITECH + METASUL) ============ */
+
+/* 1) Padrão usado pelo JS atual: <span class="dot dual"></span> */
+.dot.dual{
+  position:relative;
+  width:22px;            /* espaço para as duas bolinhas */
+  height:12px;
+  background:transparent;
+  border-radius:0;       /* não queremos círculo externo */
+  display:inline-block;
+}
+.dot.dual::before,
+.dot.dual::after{
+  content:"";
+  position:absolute; top:0;
+  width:10px; height:10px; border-radius:50%;
+}
+.dot.dual::before{ left:0;  background: var(--arquitech); }
+.dot.dual::after{  right:0; background: var(--metasul); }
+
+/* 2) Suporte opcional ao markup antigo (.brand-dual .pair) — não atrapalha se não usar */
+.brand-dual{ display:flex; align-items:center; gap:8px; }
+.brand-dual .pair{ position:relative; width:24px; height:14px; flex:0 0 24px; }
+.brand-dual .pair::before,
+.brand-dual .pair::after{
+  content:""; position:absolute; top:1px; width:10px; height:10px; border-radius:50%;
+}
+.brand-dual .pair::before{ left:0;  background: var(--arquitech); }
+.brand-dual .pair::after{  right:0; background: var(--metasul); }
+
+/* (opcionais) regras antigas de card mix — não são usadas se o JS não aplicar a classe */
+.card.marca-mix{
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--arquitech) 90%, white 10%),
+    color-mix(in srgb, var(--metasul) 90%, white 10%)
+  );
+  border: 1px solid transparent;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(90deg, var(--arquitech), var(--metasul));
+  box-shadow: var(--shadow);
+}
+.card.marca-mix .title,
+.card.marca-mix .linha-badge .linha,
+.card.marca-mix .mini-value,
+.card.marca-mix .dates strong{
+  color:#0f172a;
+}
+.banner-marca.marca-mix{
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--arquitech) 92%, white 8%),
+    color-mix(in srgb, var(--metasul) 92%, white 8%)
+  );
+  border: 1px solid transparent;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(90deg, var(--arquitech), var(--metasul));
+}

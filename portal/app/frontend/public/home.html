@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portal - Painel</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo" id="app-title">Portal</span>
+    </div>
+    <div class="topbar-right" style="gap:12px; display:flex; align-items:center;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <label for="empresa-select" style="font-size:12px; opacity:.85;">Empresa</label>
+        <select id="empresa-select" class="input" style="height:34px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff;">
+          <option value="">Carregando...</option>
+        </select>
+      </div>
+
+      <span class="topbar-user">
+        Olá, <span id="user-name">Usuário</span>
+      </span>
+      <button id="logout-btn" class="btn-sair">Sair</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <h1>Painel de Controle</h1>
+      <p style="margin-top:6px; opacity:.8">Acesso via Keycloak + módulos essenciais.</p>
+    </section>
+
+    <section class="cards-grid">
+
+      <div class="card home-card" data-role="projetos"
+           onclick="window.location.href='/projetos/projetos.html'">
+        <div class="card-icon"><span class="icon">🗂️</span></div>
+        <div class="card-text">
+          <h3>Projetos</h3>
+          <p>Projetos, tarefas, kanban e dossiê.</p>
+        </div>
+      </div>
+
+      <div class="card home-card" data-role="contratos"
+           onclick="window.location.href='/contratos/contratos.html'">
+        <div class="card-icon"><span class="icon">📝</span></div>
+        <div class="card-text">
+          <h3>Contratos</h3>
+          <p>Gerencie contratos e anexos.</p>
+        </div>
+      </div>
+
+      <div class="card home-card" data-role="links"
+           onclick="window.location.href='/links/links_admin.html'">
+        <div class="card-icon"><span class="icon">🔗</span></div>
+        <div class="card-text">
+          <h3>Links</h3>
+          <p>Gerencie links públicos.</p>
+        </div>
+      </div>
+
+      <div class="card home-card" data-role="vagas"
+           onclick="window.location.href='/vagas/cadastro_vagas.html'">
+        <div class="card-icon"><span class="icon">💼</span></div>
+        <div class="card-text">
+          <h3>Vagas</h3>
+          <p>Publique vagas e gerencie candidaturas.</p>
+        </div>
+      </div>
+
+      <div class="card home-card" data-role="usuarios_admin"
+           onclick="window.location.href='/usuarios/usuarios.html'">
+        <div class="card-icon"><span class="icon">👥</span></div>
+        <div class="card-text">
+          <h3>Usuários</h3>
+          <p>Administre empresas e permissões (via Keycloak).</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

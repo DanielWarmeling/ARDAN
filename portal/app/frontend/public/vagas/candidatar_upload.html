@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Candidatura | Enviar currículo</title>
+
+  <!-- Fonte padrão do site -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS específico desta página (NÃO mudar o nome/rota) -->
+  <link rel="stylesheet" href="./css/candidatar_upload.css">
+  <link rel="icon" href="../assets/ibmf-favicon.png">
+
+  <!-- (mantido do seu arquivo) -->
+</head>
+<body>
+  <!-- Topbar consistente com o site -->
+  <header class="topbar">
+       <div class="brand">
+      <img class="brand-img" src="./assets/logo-ibmf-met-arq.png" alt="IBMF"/>
+    </div>
+    <div class="cta-right"></div>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <header class="form-head">
+        <span class="pill">Candidatura</span>
+        <h1 class="form-title">Enviar currículo pronto</h1>
+        <p class="muted">Anexe seu arquivo (PDF, DOC, JPG, PNG) e informe seus dados básicos.</p>
+      </header>
+
+      <!-- Dados pessoais -->
+      <div class="grid-2">
+        <div class="field">
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="idade">Idade (anos)</label>
+          <input type="number" id="idade" min="14" max="100" inputmode="numeric" required />
+        </div>
+
+        <div class="field">
+          <label for="whats">Whatsapp (DDD + número)</label>
+          <input type="tel" id="whats" placeholder="(00) 90000-0000" required />
+        </div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" autocomplete="email" required />
+        </div>
+      </div>
+
+      <!-- Informações adicionais -->
+      <div class="grid-2">
+        <div class="field">
+          <label>Já trabalhou na nossa empresa?</label>
+          <div class="radios">
+            <label><input type="radio" name="ex" value="Sim" required /> Sim</label>
+            <label><input type="radio" name="ex" value="Não" /> Não</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="origem">Onde você viu essa vaga?</label>
+          <select id="origem" required>
+            <option value="" disabled selected>Selecione</option>
+            <option>Instagram</option>
+            <option>LinkedIn</option>
+            <option>Rádio</option>
+            <option>Panfletos</option>
+            <option>Indicação de amigo</option>
+            <option>Outros</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field hide" id="origemOutrosWrap">
+        <label for="origemOutros">Descreva (Outros)</label>
+        <input type="text" id="origemOutros" placeholder="Ex.: Grupo do bairro, site X..." />
+      </div>
+
+      <!-- Upload -->
+      <div class="field">
+        <label for="file">Currículo (PDF, DOC, JPG, PNG – até 10MB)</label>
+        <input type="file" id="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
+        <small class="muted">Dica: prefira PDF para melhor leitura.</small>
+      </div>
+
+      <!-- CAPTCHA -->
+      <div class="field">
+        <label>Verificação humana</label>
+        <!-- COLOQUEI A SUA SITEKEY REAL AQUI -->
+        <div class="h-captcha" data-sitekey="cc12c2f6-34c0-405a-a782-d082c8e8ab84" data-theme="light"></div>
+        <noscript>
+          <strong>Ative o JavaScript para validar o hCaptcha.</strong>
+        </noscript>
+      </div>
+
+      <!-- LGPD -->
+      <div class="field check">
+        <label>
+          <input type="checkbox" id="lgpd" required />
+          Concordo com o uso dos meus dados conforme a
+          <a href="./termos.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>.
+        </label>
+      </div>
+
+      <!-- Ações -->
+      <div class="actions">
+        <button class="btn ghost" type="button" id="btnCancelar">Cancelar</button>
+        <button class="btn primary" type="button" id="btnEnviar" disabled>Enviar candidatura</button>
+      </div>
+
+      <!-- feedback -->
+      <p id="msg" class="msg"></p>
+    </section>
+  </main>
+
+  <!-- hCaptcha -->
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  <!-- JS específico desta página (NÃO mudar o nome/rota) -->
+  <script src="./js/candidatar_upload.js"></script>
+</body>
+</html>

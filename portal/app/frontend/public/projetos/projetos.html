@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Projetos - Portal</title>
+
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <link rel="stylesheet" href="css/projetos.css" />
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="ph-fill ph-squares-four"></i>
+        </div>
+        <div class="brand-info">
+          <span class="brand-name">Portal</span>
+          <span class="brand-desc">Workspace</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-group">
+          <span class="nav-label">Menu</span>
+          <a class="nav-item active" href="#" onclick="app.showDashboard();return false;">
+            <i class="ph ph-chart-pie-slice"></i>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item" href="/projetos/configuracoes.html" data-projetos-admin="1">
+            <i class="ph ph-gear"></i>
+            <span>Configurações</span>
+          </a>
+        </div>
+
+        <div class="nav-group" style="margin-top: 1rem;">
+          <span class="nav-label">Atalhos</span>
+          <a class="nav-item" href="/home.html">
+            <i class="ph ph-house"></i>
+            <span>Home</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="sidebarAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebarUserName">Usuário</span>
+            <span class="user-role" id="sidebarUserRole">-</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="pageTitle">Projetos</h1>
+          <div class="muted" id="pageSub">Acompanhe produto e rotina de setores</div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn ghost" id="btnReload" type="button">
+            <i class="ph ph-arrows-clockwise"></i>
+            Recarregar
+          </button>
+
+          <button class="btn secondary" id="btnAprovacoes" type="button">
+            <i class="ph ph-check-square"></i>
+            Aprovações
+          </button>
+
+          <button class="btn primary" id="btnNewProject" type="button">
+            <i class="ph ph-plus"></i>
+            Novo Projeto
+          </button>
+        </div>
+      </header>
+
+      <section class="content">
+        <!-- KPIs -->
+        <div class="grid2" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+          <div class="panel" style="padding: 1.25rem; flex-direction: row; align-items: center; justify-content: space-between;">
+            <div>
+              <div class="muted" style="font-size: 0.85rem; font-weight: 600;">Ativos</div>
+              <div class="panel-title" style="font-size: 1.5rem;" id="kpiActive">0</div>
+            </div>
+            <div style="color: var(--primary); font-size: 2rem;"><i class="ph ph-folder-notch-open"></i></div>
+          </div>
+          <div class="panel" style="padding: 1.25rem; flex-direction: row; align-items: center; justify-content: space-between;">
+            <div>
+              <div class="muted" style="font-size: 0.85rem; font-weight: 600;">Atrasados</div>
+              <div class="panel-title" style="font-size: 1.5rem; color: var(--danger);" id="kpiDelayed">0</div>
+            </div>
+            <div style="color: var(--danger); font-size: 2rem;"><i class="ph ph-warning-circle"></i></div>
+          </div>
+          <div class="panel" style="padding: 1.25rem; flex-direction: row; align-items: center; justify-content: space-between;">
+            <div>
+              <div class="muted" style="font-size: 0.85rem; font-weight: 600;">Tarefas Vencidas</div>
+              <div class="panel-title" style="font-size: 1.5rem; color: var(--warning);" id="kpiTasksDue">0</div>
+            </div>
+            <div style="color: var(--warning); font-size: 2rem;"><i class="ph ph-alarm"></i></div>
+          </div>
+        </div>
+
+        <!-- LISTA -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Lista de Projetos</div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <div class="field" style="width: 200px;">
+                <input id="fSearch" type="text" placeholder="Buscar projeto..." />
+              </div>
+              <div class="field" style="width: 150px;">
+                <select id="fStatus">
+                  <option value="">Status: Todos</option>
+                  <option value="PENDENTE_APROVACAO">Pendente</option>
+                  <option value="EM_ANDAMENTO">Em andamento</option>
+                  <option value="PAUSADO">Pausado</option>
+                  <option value="CONCLUIDO">Concluído</option>
+                  <option value="CANCELADO">Cancelado</option>
+                </select>
+              </div>
+              <div class="field" style="width: 150px;">
+                <select id="fModel">
+                  <option value="">Modelo: Todos</option>
+                </select>
+              </div>
+              <div class="field" style="width: 150px;">
+                <select id="fSector">
+                  <option value="">Setor: Todos</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Projeto</th>
+                  <th>Modelo</th>
+                  <th>Status</th>
+                  <th>Etapa</th>
+                  <th>Responsável</th>
+                  <th>Entrega</th>
+                </tr>
+              </thead>
+              <tbody id="projectsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: NOVO PROJETO -->
+  <div class="modal" id="modalNew">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title">Novo Projeto</div>
+        <button class="icon-btn" id="btnCloseModal">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <form id="formNew" class="form">
+        <div id="step1">
+          <div class="field">
+            <label>Selecione o Modelo</label>
+            <select name="model_id" id="m-modelo" required></select>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn ghost" id="btnCancelModal">Cancelar</button>
+            <button type="button" class="btn primary" id="btnNextStep">Próximo</button>
+          </div>
+        </div>
+
+        <div id="step2" class="hidden">
+          <div class="grid2">
+            <div class="field">
+              <label>Solicitante</label>
+              <input name="owner" id="m-solicitante" readonly />
+            </div>
+            <div class="field">
+              <label>Data de abertura</label>
+              <input id="m-data-abertura" readonly />
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field" id="fieldProjectName">
+              <label>Nome do projeto</label>
+              <input name="name" id="m-nome" />
+            </div>
+            <div class="field" id="fieldProjectCode">
+              <label>Código</label>
+              <input name="code" id="m-codigo" placeholder="Opcional" />
+            </div>
+          </div>
+
+          <div class="field" id="fieldProjectDeadline">
+            <label>Prazo final</label>
+            <input type="date" name="deadline" id="m-prazo-final" />
+          </div>
+
+          <div class="field">
+            <label>Campos do projeto</label>
+            <div id="m-dyn-fields" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn ghost" id="btnBackStep">Voltar</button>
+            <button type="submit" class="btn primary">Criar Projeto</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="js/projetos.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+MULTIEMPRESA - nota importante
+
+Os módulos principais deste pacote (Projetos, Contratos, Links e Vagas)
+foram preparados para trabalhar por empresa usando:
+- groups do Keycloak no formato /empresas/NOME
+- header X-Empresa-Slug
+- filtro por coluna empresa nas tabelas principais
+
+Isso significa:
+- um usuário só acessa empresas que existirem no token dele
+- cada consulta principal filtra pela empresa ativa
+
+Importante:
+- isso não transforma automaticamente qualquer rota legada em multiempresa
+- se você reativar páginas ou rotas antigas fora deste recorte, precisa auditar
+  se elas também filtram pela empresa
+
+No cenário deste pacote, usando apenas os módulos do recorte atual,
+o isolamento por empresa está implementado no backend.

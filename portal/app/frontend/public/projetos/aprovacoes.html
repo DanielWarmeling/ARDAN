@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aprovações - Projetos</title>
+
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <link rel="stylesheet" href="css/projetos.css" />
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="ph-fill ph-squares-four"></i>
+        </div>
+        <div class="brand-info">
+          <span class="brand-name">Portal</span>
+          <span class="brand-desc">Workspace</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-group">
+          <span class="nav-label">Menu</span>
+          <a class="nav-item" href="/projetos/projetos.html">
+            <i class="ph ph-folder-open"></i>
+            <span>Projetos</span>
+          </a>
+          <a class="nav-item active" href="/projetos/aprovacoes.html" data-projetos-admin="1">
+            <i class="ph ph-check-square"></i>
+            <span>Aprovações</span>
+          </a>
+        </div>
+
+        <div class="nav-group" style="margin-top: 1rem;">
+          <span class="nav-label">Atalhos</span>
+          <a class="nav-item" href="/home.html">
+            <i class="ph ph-house"></i>
+            <span>Home</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="sidebarAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebarUserName">Usuário</span>
+            <span class="user-role" id="sidebarUserRole">-</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1>Aprovações</h1>
+          <div class="muted">Gerencie pendências de projetos e tarefas</div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn ghost" id="btnReload">
+            <i class="ph ph-arrows-clockwise"></i> Recarregar
+          </button>
+          <button class="btn ghost" id="btnVoltar">
+            <i class="ph ph-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Lista de Aprovações</div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <div class="field" style="width: 150px;">
+                <select id="f-status">
+                  <option value="PENDENTE">Pendente</option>
+                  <option value="APROVADO">Aprovado</option>
+                  <option value="REPROVADO">Reprovado</option>
+                  <option value="">Todos</option>
+                </select>
+              </div>
+              <div class="field" style="width: 150px;">
+                <select id="f-tipo">
+                  <option value="">Tipo: Todos</option>
+                  <option value="PROJETO">Projeto</option>
+                  <option value="TAREFA">Tarefa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Projeto / Contexto</th>
+                  <th>Status</th>
+                  <th>Solicitante</th>
+                  <th>Data</th>
+                  <th>Detalhes</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyAprovacoes"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="js/aprovacoes.js"></script>
+</body>
+</html>

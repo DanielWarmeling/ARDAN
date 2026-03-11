@@ -1,0 +1,22 @@
+{
+  "name": "portal-comercial-backend",
+  "version": "1.0.0",
+  "description": "Backend do portal SaaS com Keycloak",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.5.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.1",
+    "papaparse": "^5.4.1",
+    "xlsx": "^0.18.5",
+    "pdfkit": "^0.13.0",
+    "jose": "^5.6.3"
+  }
+}

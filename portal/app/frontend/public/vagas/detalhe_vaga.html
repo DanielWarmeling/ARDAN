@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vaga | Detalhe</title>
+
+  <!-- Fonte (igual à lista) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS da página -->
+  <link rel="stylesheet" href="./css/detalhe_vaga.css">
+  <link rel="icon" href="../assets/ibmf-favicon.png">
+
+  <!-- (mantido do seu arquivo) -->
+</head>
+<body>
+  <!-- Topbar: voltar + logo IBMF (imagem) + CTAs -->
+  <header class="topbar">
+    <a class="btn-back" href="./lista_vagas.html"><span class="icon">←</span> Voltar</a>
+
+    <div class="brand">
+      <img class="brand-img" src="./assets/logo-ibmf-met-arq.png" alt="IBMF" />
+    </div>
+
+    <div class="cta-right">
+      <button id="btnCandidatarTop" class="btn primary sm">Candidatar-se</button>
+      <button id="btnCopyLinkTop" class="btn ghost sm">📋 Copiar link</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <!-- Título + lead com accent por linha -->
+      <div id="heroAccent" class="hero-left card soft">
+        <span class="pill soft">Vaga</span>
+        <h1 id="vagaTitulo" class="vaga-titulo">—</h1>
+        <p id="vagaLead" class="vaga-lead">.</p>
+      </div>
+
+      <!-- Card da linha à direita, com 4 mini-cards fixos -->
+      <aside class="hero-right card banner-marca">
+        <div class="linha-badge" id="linhaBadge">
+          <span id="linhaDot" class="dot"></span>
+          <span id="linhaNome" class="linha">—</span>
+        </div>
+
+        <div class="info-cards">
+          <div class="mini-card">
+            <div class="mini-icon">📍</div>
+            <div class="mini-text">
+              <div class="mini-label">Local</div>
+              <div id="infoLocal" class="mini-value">—</div>
+            </div>
+          </div>
+
+          <div class="mini-card">
+            <div class="mini-icon">🧾</div>
+            <div class="mini-text">
+              <div class="mini-label">Vínculo</div>
+              <div id="infoVinculo" class="mini-value">—</div>
+            </div>
+          </div>
+
+          <div class="mini-card">
+            <div class="mini-icon">💼</div>
+            <div class="mini-text">
+              <div class="mini-label">Modelo</div>
+              <div id="infoModelo" class="mini-value">—</div>
+            </div>
+          </div>
+
+          <div class="mini-card">
+            <div class="mini-icon">✚</div>
+            <div class="mini-text">
+              <div class="mini-label">PcD</div>
+              <div id="infoPcD" class="mini-value">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dates">
+          <span>Publicada em: <strong id="dtPublicada">—</strong></span>
+          <span id="inscricoesWrap" class="hide">Inscrições até: <strong id="dtInscricoes">—</strong></span>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Blocos de conteúdo -->
+    <section class="block card">
+      <h2>Descrição da vaga</h2>
+      <p id="descricaoVaga" class="text">—</p>
+    </section>
+
+    <section id="respBlock" class="block card hide">
+      <h2>Responsabilidades e atribuições</h2>
+      <ul id="respLista" class="list"></ul>
+    </section>
+
+    <section id="reqBlock" class="block card hide">
+      <h2>Requisitos e qualificações</h2>
+      <ul id="reqLista" class="list"></ul>
+    </section>
+
+    <section id="infoBlock" class="block card hide">
+      <h2>Informações adicionais</h2>
+      <ul id="infoLista" class="list"></ul>
+    </section>
+
+    <section id="etapasBlock" class="block card hide">
+      <h2>Etapas do processo</h2>
+      <ol id="etapasLista" class="list num"></ol>
+    </section>
+
+    <!-- Sobre padrão (pode ser sobrescrito pelo backend se desejar) -->
+    <section class="block card">
+      <h2>Sobre a IBMF</h2>
+      <p id="sobreIbmf" class="text">
+        Industria Brasileira de materiais para construção.
+      </p>
+
+      <div class="links">
+        <a id="lkSite"       href="#" target="_blank" rel="noopener" class="link">🌐 Website</a>
+        <a id="lkLinkedin"   href="#" target="_blank" rel="noopener" class="link">🔗 LinkedIn</a>
+        <a id="lkFacebook"   href="#" target="_blank" rel="noopener" class="link">📘 Facebook</a>
+        <a id="lkInstagram"  href="#" target="_blank" rel="noopener" class="link">📸 Instagram</a>
+        <a id="lkGlassdoor"  href="#" target="_blank" rel="noopener" class="link">💼 Glassdoor</a>
+      </div>
+    </section>
+
+    <!-- CTA inferior -->
+    <section class="cta-bottom">
+      <button id="btnCandidatarBottom" class="btn primary">Candidatar-se</button>
+      <button id="btnCopyLinkBottom" class="btn ghost">📋 Copiar link</button>
+    </section>
+  </main>
+
+  <!-- ================= Modal Candidatura ================= -->
+  <div id="candModal" class="cand-modal" aria-hidden="true">
+    <div class="cand-backdrop" data-close="1"></div>
+
+    <div class="cand-dialog" role="dialog" aria-labelledby="candTitle" aria-modal="true">
+      <button class="cand-close" aria-label="Fechar" data-close="1">×</button>
+
+      <div class="cand-header">
+        <span class="cand-breadcrumb">• Candidatura</span>
+        <h2 id="candTitle" class="cand-title">Como deseja candidatar-se?</h2>
+        <p class="cand-sub">Escolha uma das opções abaixo para continuar</p>
+      </div>
+
+      <div class="cand-cards">
+        <!-- Card 1: Enviar currículo pronto -->
+        <article class="cand-card" id="cardUpload" tabindex="0" role="button" aria-label="Enviar currículo pronto">
+          <div class="cand-card-top">
+            <div class="cand-pill pill-arquitech"></div>
+            <div class="cand-progress"></div>
+          </div>
+          <div class="cand-card-body">
+            <div class="cand-ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="cand-card-title">Enviar currículo pronto</h3>
+            <p class="cand-card-desc">Anexe seu PDF, PNG, JPG ou DOC. Vamos capturar seus dados básicos.</p>
+            <button class="cand-btn" type="button">Anexar arquivo</button>
+          </div>
+        </article>
+
+        <!-- Card 2: Preencher currículo agora -->
+        <article class="cand-card" id="cardGerar" tabindex="0" role="button" aria-label="Preencher currículo agora">
+          <div class="cand-card-top">
+            <div class="cand-pill pill-metasul"></div>
+            <div class="cand-progress"></div>
+          </div>
+          <div class="cand-card-body">
+            <div class="cand-ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="cand-card-title">Preencher currículo agora</h3>
+            <p class="cand-card-desc">Responda passo a passo e geramos seu currículo automaticamente.</p>
+            <button class="cand-btn" type="button">Começar formulário</button>
+          </div>
+        </article>
+      </div>
+
+      <p class="cand-footnote">Você poderá revisar todas as informações antes de enviar.</p>
+    </div>
+  </div>
+  <!-- =============== /Modal Candidatura ================== -->
+
+  <!-- JS da página (todo o comportamento fica aqui) -->
+  <script src="./js/detalhe_vaga.js"></script>
+</body>
+</html>
