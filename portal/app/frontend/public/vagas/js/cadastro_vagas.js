@@ -5,7 +5,7 @@
   const $$ = (s) => Array.from(document.querySelectorAll(s));
   const toast = (m) => alert(m);
 
-  const getToken = () => localStorage.getItem('token') || '';
+  const getToken = () => (window.Auth?.getToken?.() || localStorage.getItem('token') || '');
 
   // Redireciona para login quando não há token ou quando o back rejeita (401/403)
   function redirectToLogin(msg) {
@@ -15,6 +15,15 @@
 
   // Fetch com Authorization + tratamento de 401/403
   async function fetchAuth(url, opt = {}) {
+    if (window.Auth?.fetch) {
+      const headers = Object.assign({ 'Content-Type': 'application/json' }, opt.headers || {});
+      const resp = await window.Auth.fetch(url, { ...opt, headers });
+      if (resp.status === 401 || resp.status === 403) {
+        redirectToLogin('Token inválido/expirado');
+      }
+      return resp;
+    }
+
     const token = getToken();
     if (!token) {
       redirectToLogin('Sem token na storage');
@@ -26,7 +35,6 @@
     );
     const resp = await fetch(url, { ...opt, headers });
     if (resp.status === 401 || resp.status === 403) {
-      try { console.error('Auth fail', await resp.clone().text()); } catch {}
       redirectToLogin('Token inválido/expirado');
       return resp;
     }
@@ -356,10 +364,16 @@
   fAtivas?.addEventListener('change', listarVagas);
 
   // ===== Boot =====
-  if (!getToken()) {
-    redirectToLogin('Sem token na storage');
-    return;
-  }
-  carregarGlobais();
-  listarVagas();
+  (async () => {
+    if (window.Auth?.requireAuth) {
+      try { await window.Auth.requireAuth(); }
+      catch { redirectToLogin('Sessão inválida'); return; }
+    } else if (!getToken()) {
+      redirectToLogin('Sem token na storage');
+      return;
+    }
+
+    carregarGlobais();
+    listarVagas();
+  })();
 })();
